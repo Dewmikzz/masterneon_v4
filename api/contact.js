@@ -23,29 +23,43 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const { name, email, phone, message } = req.body
+    // Log the incoming request for debugging
+    console.log('📨 Contact form request received')
+    console.log('Request method:', req.method)
+    console.log('Request headers:', JSON.stringify(req.headers))
+    console.log('Request body:', JSON.stringify(req.body))
+
+    const { name, email, phone, message } = req.body || {}
 
     // Validation
     if (!name || !name.trim()) {
+      console.log('❌ Validation failed: Name is required')
       return res.status(400).json({
+        success: false,
         message: 'Validation failed',
         errors: [{ field: 'name', message: 'Name is required' }],
       })
     }
 
     if (!email || !isValidEmail(email)) {
+      console.log('❌ Validation failed: Valid email required')
       return res.status(400).json({
+        success: false,
         message: 'Validation failed',
         errors: [{ field: 'email', message: 'Valid email required' }],
       })
     }
 
     if (!message || !message.trim()) {
+      console.log('❌ Validation failed: Message is required')
       return res.status(400).json({
+        success: false,
         message: 'Validation failed',
         errors: [{ field: 'message', message: 'Message is required' }],
       })
     }
+
+    console.log('✅ Validation passed')
 
     try {
       console.log('📧 Sending contact email...')
@@ -77,10 +91,13 @@ module.exports = async (req, res) => {
     }
   } catch (err) {
     console.error('❌ Unexpected error handling contact message:', err)
-    console.error('Error stack:', err.stack)
+    console.error('Error name:', err?.name)
+    console.error('Error message:', err?.message)
+    console.error('Error stack:', err?.stack)
     return res.status(500).json({
       success: false,
-      message: err.message || 'Internal server error',
+      message: err?.message || 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? err?.stack : undefined,
     })
   }
 }

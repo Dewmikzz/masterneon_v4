@@ -123,7 +123,18 @@ const ContactPage = () => {
     setStatus({ type: 'idle', message: '' })
     setValidationErrors({})
     try {
-      const response = await api.post('/contact', form)
+      console.log('📤 Sending contact form data:', form)
+      const response = await api.post('/contact', form, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      console.log('✅ Contact form response:', response.data)
+      
+      if (response?.data?.success === false) {
+        throw new Error(response.data.message || 'Failed to send message')
+      }
+      
       setForm({ name: '', email: '', phone: '', message: '' })
       setValidationErrors({})
       const responseMessage = response?.data?.message || "Thanks! We'll respond in 1 business day."
