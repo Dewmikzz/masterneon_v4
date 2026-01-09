@@ -4,6 +4,35 @@ import type { BuilderConfig, CustomerDetails, NameSignConfig } from '../types/ne
 import { defaultTemplates, neonFonts, sizePrices } from '../data/builderOptions'
 import { formatCurrency } from './pricing'
 
+// Helper function to download PDF from base64 string
+export const downloadPDFFromBase64 = (base64: string, filename: string) => {
+  try {
+    // Remove data URI prefix if present
+    const cleanBase64 = base64.replace(/^data:application\/pdf;base64,/, '')
+    
+    // Convert base64 to blob
+    const byteCharacters = atob(cleanBase64)
+    const byteNumbers = new Array(byteCharacters.length)
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i)
+    }
+    const byteArray = new Uint8Array(byteNumbers)
+    const blob = new Blob([byteArray], { type: 'application/pdf' })
+    
+    // Create download link
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = filename
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  } catch (error) {
+    console.error('Error downloading PDF:', error)
+  }
+}
+
 const BRAND_LOGO_URL = '/pdf/master-neon-logo.png'
 
 // Helper to convert hex to RGB

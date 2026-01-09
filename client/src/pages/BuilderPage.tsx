@@ -6,7 +6,7 @@ import NeonButton from '../components/common/NeonButton'
 import { neonColorOptions, sizeOptions, defaultTemplates, sizeMaxLetters, getDefaultFont } from '../data/builderOptions'
 import FontDropdown from '../components/builder/FontDropdown'
 import type { BuilderConfig, CustomerDetails, NameSignConfig, LogoSignConfig } from '../types/neon'
-import { generatePDF, generateInvoicePDF } from '../utils/pdfGenerator'
+import { generatePDF, generateInvoicePDF, downloadPDFFromBase64 } from '../utils/pdfGenerator'
 import api from '../services/api'
 
 const BuilderPage = () => {
@@ -271,6 +271,12 @@ const BuilderPage = () => {
         const previewNode = activeTab === 'name' ? previewElementRef.current : null
         pdfBase64 = await generatePDF(config, customerDetails, previewNode)
         setGeneratedPdfBase64(pdfBase64)
+      } else {
+        // PDF already generated, trigger download manually
+        const timestamp = new Date().toISOString().split('T')[0]
+        downloadPDFFromBase64(pdfBase64, `MasterNeon-Design-${timestamp}.pdf`)
+        // Small delay to avoid browser blocking multiple downloads
+        await new Promise(resolve => setTimeout(resolve, 500))
       }
 
       // Generate invoice PDF
@@ -278,6 +284,10 @@ const BuilderPage = () => {
       if (!invoicePdfBase64) {
         invoicePdfBase64 = await generateInvoicePDF(config, customerDetails)
         setGeneratedInvoicePdfBase64(invoicePdfBase64)
+      } else {
+        // Invoice PDF already generated, trigger download manually
+        const timestamp = new Date().toISOString().split('T')[0]
+        downloadPDFFromBase64(invoicePdfBase64, `MasterNeon-Invoice-${timestamp}.pdf`)
       }
 
       // Estimate payload size and skip PDFs if too large (Vercel limit is ~4.5MB)
