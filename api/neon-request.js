@@ -1,7 +1,17 @@
+require('dotenv').config()
 const { sendNeonRequestEmail } = require('../server/src/services/emailService')
 
 // Configure max body size (Vercel default is 4.5MB, we'll optimize payload instead)
 module.exports = async (req, res) => {
+  // CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end()
+  }
+
   // Only allow POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' })
@@ -21,19 +31,31 @@ module.exports = async (req, res) => {
     
     // Optimize payload: Remove PDF if it's too large (keep only essential data)
     let optimizedPdfBase64 = pdfBase64
-    if (pdfBase64 && pdfBase64.length > 2 * 1024 * 1024) {
-      // PDF is larger than 2MB, don't send it (email will still work)
-      console.log('PDF too large, skipping attachment to reduce payload size')
-      optimizedPdfBase64 = null
+    if (pdfBase64) {
+      // Remove data URI prefix to get actual base64 length
+      const base64Length = pdfBase64.includes(',') 
+        ? pdfBase64.split(',')[1].length 
+        : pdfBase64.length
+      
+      // PDF is larger than 1.5MB base64, don't send it (email will still work)
+      if (base64Length > 1.5 * 1024 * 1024) {
+        console.log('PDF too large (' + Math.round(base64Length / 1024) + 'KB), skipping attachment to reduce payload size')
+        optimizedPdfBase64 = null
+      }
     }
     
-    // Optimize image preview: If it's too large, compress or skip
+    // Optimize image preview: If it's too large, skip it
     let optimizedImagePreview = imagePreview
-    if (imagePreview && imagePreview.length > 2 * 1024 * 1024) {
-      console.log('Image preview too large, attempting to optimize')
-      // Try to remove data URI prefix to reduce size slightly
-      if (imagePreview.startsWith('data:image')) {
-        optimizedImagePreview = imagePreview
+    if (imagePreview) {
+      // Remove data URI prefix to get actual base64 length
+      const base64Length = imagePreview.includes(',') 
+        ? imagePreview.split(',')[1].length 
+        : imagePreview.length
+      
+      // Image is larger than 1.5MB base64, skip it
+      if (base64Length > 1.5 * 1024 * 1024) {
+        console.log('Image preview too large (' + Math.round(base64Length / 1024) + 'KB), skipping to reduce payload size')
+        optimizedImagePreview = null
       }
     }
 

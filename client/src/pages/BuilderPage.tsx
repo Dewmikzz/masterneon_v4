@@ -122,10 +122,48 @@ const BuilderPage = () => {
     return undefined
   }
 
+  // Compress image to reduce payload size
+  const compressImage = (dataUrl: string, maxWidth = 800, quality = 0.7): Promise<string> => {
+    return new Promise((resolve) => {
+      const img = new Image()
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        let width = img.width
+        let height = img.height
+
+        // Scale down if too large
+        if (width > maxWidth) {
+          height = (height * maxWidth) / width
+          width = maxWidth
+        }
+
+        canvas.width = width
+        canvas.height = height
+
+        const ctx = canvas.getContext('2d')
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height)
+          const compressed = canvas.toDataURL('image/jpeg', quality)
+          resolve(compressed)
+        } else {
+          resolve(dataUrl) // Fallback to original
+        }
+      }
+      img.onerror = () => resolve(dataUrl) // Fallback to original on error
+      img.src = dataUrl
+    })
+  }
+
   const handleCustomerChange =
     <K extends keyof CustomerDetails>(field: K) =>
       (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const value = event.target.value
+        let value = event.target.value
+
+        // Restrict phone input to numbers only
+        if (field === 'phone') {
+          value = value.replace(/\D/g, '') // Remove all non-digits
+        }
+
         setCustomerDetails((prev) => ({ ...prev, [field]: value }))
 
         // Validate on change
@@ -213,7 +251,17 @@ const BuilderPage = () => {
     try {
       const config = getCurrentConfig()
       // For logo, use uploaded image; for name, capture canvas
-      const imagePreview = activeTab === 'logo' ? (config as LogoSignConfig).imageData : previewRef.current?.getImage()
+      let imagePreview = activeTab === 'logo' ? (config as LogoSignConfig).imageData : previewRef.current?.getImage()
+
+      // Compress image preview to reduce payload size (Vercel has 4.5MB limit)
+      if (imagePreview && imagePreview.startsWith('data:image')) {
+        try {
+          imagePreview = await compressImage(imagePreview, 800, 0.7)
+          console.log('Image compressed for upload')
+        } catch (compressError) {
+          console.warn('Failed to compress image, using original:', compressError)
+        }
+      }
 
       // Use stored PDF if available, otherwise generate a new one
       let pdfBase64 = generatedPdfBase64
@@ -222,6 +270,21 @@ const BuilderPage = () => {
         const previewNode = activeTab === 'name' ? previewElementRef.current : null
         pdfBase64 = await generatePDF(config, customerDetails, previewNode)
         setGeneratedPdfBase64(pdfBase64)
+      }
+
+      // Estimate payload size and skip PDF if too large (Vercel limit is ~4.5MB)
+      const payloadSize = JSON.stringify({
+        ...customerDetails,
+        config,
+        imagePreview,
+        pdfBase64,
+      }).length
+
+      // If payload is approaching limit (3.5MB), skip PDF attachment
+      const maxPayloadSize = 3.5 * 1024 * 1024 // 3.5MB to leave buffer
+      if (payloadSize > maxPayloadSize && pdfBase64) {
+        console.warn('Payload too large, skipping PDF attachment to prevent 413 error')
+        pdfBase64 = null
       }
 
       const response = await api.post('/neon-request', {
@@ -241,6 +304,15 @@ const BuilderPage = () => {
       // Clear stored PDF after successful send
       setGeneratedPdfBase64(null)
     } catch (error: any) {
+      // Handle 413 Payload Too Large error specifically
+      if (error?.response?.status === 413) {
+        setStatus({
+          type: 'error',
+          message: 'Request too large. Please try again - the image has been compressed. If this persists, try with a smaller image.',
+        })
+        return
+      }
+
       // Provide a clearer message for network errors (backend not running / CORS / unreachable)
       const isNetworkError = error?.code === 'ERR_NETWORK' || (error?.message && error.message.toLowerCase().includes('network'))
       const errorMessage = isNetworkError
