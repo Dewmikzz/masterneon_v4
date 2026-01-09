@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Space Grotesk', 'Rajdhani', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: #05060a;
+  color: #f4f4ff;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, rgba(59, 130, 246, 0.15), transparent 35%),
+    radial-gradient(circle at 20% 20%, rgba(249, 115, 22, 0.2), transparent 40%), #05060a;
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  border-radius: 1rem;
+  box-shadow: 0 0 40px rgba(5, 6, 10, 0.7);
+}
+
+.neon-heading {
+  text-shadow: 0 0 12px rgba(255, 77, 240, 0.75), 0 0 32px rgba(0, 194, 255, 0.5);
+}
+
+.builder-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.neon-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.neon-scrollbar::-webkit-scrollbar-track {
+  background: rgba(4, 6, 12, 0.6);
+}
+
+.neon-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ff4df0, #00c2ff);
+  border-radius: 999px;
+}
+
+.shadow-neon {
+  box-shadow: 0 0 15px rgba(255, 77, 240, 0.8), 0 0 30px rgba(0, 194, 255, 0.6);
+}
+
+.drop-shadow-neon {
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.75));
+}
+
+/* Animation utilities */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-top {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-in {
+  animation: fade-in 0.2s ease-out, slide-in-from-top 0.2s ease-out;
+}
+
+.fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+.slide-in-from-top-2 {
+  animation: slide-in-from-top 0.2s ease-out;
+}
+

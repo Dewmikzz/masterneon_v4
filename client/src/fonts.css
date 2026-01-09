@@ -1,0 +1,741 @@
+/* Custom Neon Fonts - trimmed to the selected styles only */
+/* Script / Handwritten */
+@font-face {
+  font-family: 'Alexa';
+  src: url('/fonts/Alexa.woff2') format('woff2'),
+       url('/fonts/Alexa.woff') format('woff'),
+       url('/fonts/Alexa.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Amanda';
+  src: url('/fonts/Amanda.woff2') format('woff2'),
+       url('/fonts/Amanda.woff') format('woff'),
+       url('/fonts/Amanda.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Amsterdam';
+  src: url('/fonts/Amsterdam.woff2') format('woff2'),
+       url('/fonts/Amsterdam.woff') format('woff'),
+       url('/fonts/Amsterdam.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Barcelona';
+  src: url('/fonts/Barcelona.woff2') format('woff2'),
+       url('/fonts/Barcelona.woff') format('woff'),
+       url('/fonts/Barcelona.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Bayview';
+  src: url('/fonts/Bayview.woff2') format('woff2'),
+       url('/fonts/Bayview.woff') format('woff'),
+       url('/fonts/Bayview.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Florence';
+  src: url('/fonts/Florence.woff2') format('woff2'),
+       url('/fonts/Florence.woff') format('woff'),
+       url('/fonts/Florence.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LazySunday';
+  src: url('/fonts/LazySunday.woff2') format('woff2'),
+       url('/fonts/LazySunday.woff') format('woff'),
+       url('/fonts/LazySunday.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'NewCursive';
+  src: url('/fonts/NewCursive.woff2') format('woff2'),
+       url('/fonts/NewCursive.woff') format('woff'),
+       url('/fonts/NewCursive.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Odessa';
+  src: url('/fonts/Odessa.woff2') format('woff2'),
+       url('/fonts/Odessa.woff') format('woff'),
+       url('/fonts/Odessa.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Venetian';
+  src: url('/fonts/Venetian.woff2') format('woff2'),
+       url('/fonts/Venetian.woff') format('woff'),
+       url('/fonts/Venetian.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vintage';
+  src: url('/fonts/Vintage.woff2') format('woff2'),
+       url('/fonts/Vintage.woff') format('woff'),
+       url('/fonts/Vintage.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LoveNote';
+  src: url('/fonts/LoveNote.woff2') format('woff2'),
+       url('/fonts/LoveNote.woff') format('woff'),
+       url('/fonts/LoveNote.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LOSANGELES';
+  src: url('/fonts/LOSANGELES.woff2') format('woff2'),
+       url('/fonts/LOSANGELES.woff') format('woff'),
+       url('/fonts/LOSANGELES.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SIMPLICITY';
+  src: url('/fonts/SIMPLICITY.woff2') format('woff2'),
+       url('/fonts/SIMPLICITY.woff') format('woff'),
+       url('/fonts/SIMPLICITY.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DuneRise';
+  src: url('/fonts/DuneRise.woff2') format('woff2'),
+       url('/fonts/DuneRise.woff') format('woff'),
+       url('/fonts/DuneRise.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Bellview';
+  src: url('/fonts/Bellview.woff2') format('woff2'),
+       url('/fonts/Bellview.woff') format('woff'),
+       url('/fonts/Bellview.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LOVENEON';
+  src: url('/fonts/LOVENEON.woff2') format('woff2'),
+       url('/fonts/LOVENEON.woff') format('woff'),
+       url('/fonts/LOVENEON.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'NEONGLOW';
+  src: url('/fonts/NEONGLOW.woff2') format('woff2'),
+       url('/fonts/NEONGLOW.woff') format('woff'),
+       url('/fonts/NEONGLOW.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Submarine';
+  src: url('/fonts/Submarine.woff2') format('woff2'),
+       url('/fonts/Submarine.woff') format('woff'),
+       url('/fonts/Submarine.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Custom Neon Fonts - @font-face declarations */
+
+/* Script/Handwritten Fonts */
+@font-face {
+  font-family: 'Alexa';
+  src: url('/fonts/Alexa.woff2') format('woff2'),
+       url('/fonts/Alexa.woff') format('woff'),
+       url('/fonts/Alexa.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Barcelona';
+  src: url('/fonts/Barcelona.woff2') format('woff2'),
+       url('/fonts/Barcelona.woff') format('woff'),
+       url('/fonts/Barcelona.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Bayview';
+  src: url('/fonts/Bayview.woff2') format('woff2'),
+       url('/fonts/Bayview.woff') format('woff'),
+       url('/fonts/Bayview.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Amsterdam';
+  src: url('/fonts/Amsterdam.woff2') format('woff2'),
+       url('/fonts/Amsterdam.woff') format('woff'),
+       url('/fonts/Amsterdam.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Florence';
+  src: url('/fonts/Florence.woff2') format('woff2'),
+       url('/fonts/Florence.woff') format('woff'),
+       url('/fonts/Florence.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Greenworld';
+  src: url('/fonts/Greenworld.woff2') format('woff2'),
+       url('/fonts/Greenworld.woff') format('woff'),
+       url('/fonts/Greenworld.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lazy Sunday';
+  src: url('/fonts/LazySunday.woff2') format('woff2'),
+       url('/fonts/LazySunday.woff') format('woff'),
+       url('/fonts/LazySunday.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'NewCursive';
+  src: url('/fonts/NewCursive.woff2') format('woff2'),
+       url('/fonts/NewCursive.woff') format('woff'),
+       url('/fonts/NewCursive.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'NottingHill';
+  src: url('/fonts/NottingHill.woff2') format('woff2'),
+       url('/fonts/NottingHill.woff') format('woff'),
+       url('/fonts/NottingHill.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Odessa';
+  src: url('/fonts/Odessa.woff2') format('woff2'),
+       url('/fonts/Odessa.woff') format('woff'),
+       url('/fonts/Odessa.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vintage';
+  src: url('/fonts/Vintage.woff2') format('woff2'),
+       url('/fonts/Vintage.woff') format('woff'),
+       url('/fonts/Vintage.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Venetican';
+  src: url('/fonts/Venetican.woff2') format('woff2'),
+       url('/fonts/Venetican.woff') format('woff'),
+       url('/fonts/Venetican.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Weekender';
+  src: url('/fonts/Weekender.woff2') format('woff2'),
+       url('/fonts/Weekender.woff') format('woff'),
+       url('/fonts/Weekender.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Amanda';
+  src: url('/fonts/Amanda.woff2') format('woff2'),
+       url('/fonts/Amanda.woff') format('woff'),
+       url('/fonts/Amanda.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Austin';
+  src: url('/fonts/Austin.woff2') format('woff2'),
+       url('/fonts/Austin.woff') format('woff'),
+       url('/fonts/Austin.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Beachfront';
+  src: url('/fonts/Beachfront.woff2') format('woff2'),
+       url('/fonts/Beachfront.woff') format('woff'),
+       url('/fonts/Beachfront.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Chelsea';
+  src: url('/fonts/Chelsea.woff2') format('woff2'),
+       url('/fonts/Chelsea.woff') format('woff'),
+       url('/fonts/Chelsea.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Freehand';
+  src: url('/fonts/Freehand.woff2') format('woff2'),
+       url('/fonts/Freehand.woff') format('woff'),
+       url('/fonts/Freehand.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Freeprint';
+  src: url('/fonts/Freeprint.woff2') format('woff2'),
+       url('/fonts/Freeprint.woff') format('woff'),
+       url('/fonts/Freeprint.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LoveNote';
+  src: url('/fonts/LoveNote.woff2') format('woff2'),
+       url('/fonts/LoveNote.woff') format('woff'),
+       url('/fonts/LoveNote.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Manchester';
+  src: url('/fonts/Manchester.woff2') format('woff2'),
+       url('/fonts/Manchester.woff') format('woff'),
+       url('/fonts/Manchester.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Manscript';
+  src: url('/fonts/Manscript.woff2') format('woff2'),
+       url('/fonts/Manscript.woff') format('woff'),
+       url('/fonts/Manscript.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Northlore';
+  src: url('/fonts/Northlore.woff2') format('woff2'),
+       url('/fonts/Northlore.woff') format('woff'),
+       url('/fonts/Northlore.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Photogenic';
+  src: url('/fonts/Photogenic.woff2') format('woff2'),
+       url('/fonts/Photogenic.woff') format('woff'),
+       url('/fonts/Photogenic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Royalty';
+  src: url('/fonts/Royalty.woff2') format('woff2'),
+       url('/fonts/Royalty.woff') format('woff'),
+       url('/fonts/Royalty.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rocket';
+  src: url('/fonts/Rocket.woff2') format('woff2'),
+       url('/fonts/Rocket.woff') format('woff'),
+       url('/fonts/Rocket.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Signature';
+  src: url('/fonts/Signature.woff2') format('woff2'),
+       url('/fonts/Signature.woff') format('woff'),
+       url('/fonts/Signature.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sorrento';
+  src: url('/fonts/Sorrento.woff2') format('woff2'),
+       url('/fonts/Sorrento.woff') format('woff'),
+       url('/fonts/Sorrento.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MAScript';
+  src: url('/fonts/MAScript.woff2') format('woff2'),
+       url('/fonts/MAScript.woff') format('woff'),
+       url('/fonts/MAScript.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Modern/Sans-serif Fonts */
+@font-face {
+  font-family: 'Avante';
+  src: url('/fonts/Avante.woff2') format('woff2'),
+       url('/fonts/Avante.woff') format('woff'),
+       url('/fonts/Avante.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Buttercup';
+  src: url('/fonts/Buttercup.woff2') format('woff2'),
+       url('/fonts/Buttercup.woff') format('woff'),
+       url('/fonts/Buttercup.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ClassicType';
+  src: url('/fonts/ClassicType.woff2') format('woff2'),
+       url('/fonts/ClassicType.woff') format('woff'),
+       url('/fonts/ClassicType.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LOS ANGELES';
+  src: url('/fonts/LOSANGELES.woff2') format('woff2'),
+       url('/fonts/LOSANGELES.woff') format('woff'),
+       url('/fonts/LOSANGELES.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Melbourne';
+  src: url('/fonts/Melbourne.woff2') format('woff2'),
+       url('/fonts/Melbourne.woff') format('woff'),
+       url('/fonts/Melbourne.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'NeoTokyo';
+  src: url('/fonts/NeoTokyo.woff2') format('woff2'),
+       url('/fonts/NeoTokyo.woff') format('woff'),
+       url('/fonts/NeoTokyo.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+
+@font-face {
+  font-family: 'SanDiego';
+  src: url('/fonts/SanDiego.woff2') format('woff2'),
+       url('/fonts/SanDiego.woff') format('woff'),
+       url('/fonts/SanDiego.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SIMPLICITY';
+  src: url('/fonts/SIMPLICITY.woff2') format('woff2'),
+       url('/fonts/SIMPLICITY.woff') format('woff'),
+       url('/fonts/SIMPLICITY.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Typewriter';
+  src: url('/fonts/Typewriter.woff2') format('woff2'),
+       url('/fonts/Typewriter.woff') format('woff'),
+       url('/fonts/Typewriter.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'WAIKIKI';
+  src: url('/fonts/WAIKIKI.woff2') format('woff2'),
+       url('/fonts/WAIKIKI.woff') format('woff'),
+       url('/fonts/WAIKIKI.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Outline/Neon Fonts */
+@font-face {
+  font-family: 'Bellview';
+  src: url('/fonts/Bellview.woff2') format('woff2'),
+       url('/fonts/Bellview.woff') format('woff'),
+       url('/fonts/Bellview.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LOVENEON';
+  src: url('/fonts/LOVENEON.woff2') format('woff2'),
+       url('/fonts/LOVENEON.woff') format('woff'),
+       url('/fonts/LOVENEON.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'majorca';
+  src: url('/fonts/majorca.woff2') format('woff2'),
+       url('/fonts/majorca.woff') format('woff'),
+       url('/fonts/majorca.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Manhattan';
+  src: url('/fonts/Manhattan.woff2') format('woff2'),
+       url('/fonts/Manhattan.woff') format('woff'),
+       url('/fonts/Manhattan.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MARQUEE';
+  src: url('/fonts/MARQUEE.woff2') format('woff2'),
+       url('/fonts/MARQUEE.woff') format('woff'),
+       url('/fonts/MARQUEE.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mayfair';
+  src: url('/fonts/Mayfair.woff2') format('woff2'),
+       url('/fonts/Mayfair.woff') format('woff'),
+       url('/fonts/Mayfair.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MILAN';
+  src: url('/fonts/MILAN.woff2') format('woff2'),
+       url('/fonts/MILAN.woff') format('woff'),
+       url('/fonts/MILAN.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* duplicate NeonGlow block removed */
+
+@font-face {
+  font-family: 'NEONLITE';
+  src: url('/fonts/NEONLITE.woff2') format('woff2'),
+       url('/fonts/NEONLITE.woff') format('woff'),
+       url('/fonts/NEONLITE.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'NEONTRACE';
+  src: url('/fonts/NEONTRACE.woff2') format('woff2'),
+       url('/fonts/NEONTRACE.woff') format('woff'),
+       url('/fonts/NEONTRACE.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Nevada';
+  src: url('/fonts/Nevada.woff2') format('woff2'),
+       url('/fonts/Nevada.woff') format('woff'),
+       url('/fonts/Nevada.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SCIFI';
+  src: url('/fonts/SCIFI.woff2') format('woff2'),
+       url('/fonts/SCIFI.woff') format('woff'),
+       url('/fonts/SCIFI.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ROCKSTAR';
+  src: url('/fonts/ROCKSTAR.woff2') format('woff2'),
+       url('/fonts/ROCKSTAR.woff') format('woff'),
+       url('/fonts/ROCKSTAR.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Submarine';
+  src: url('/fonts/Submarine.woff2') format('woff2'),
+       url('/fonts/Submarine.woff') format('woff'),
+       url('/fonts/Submarine.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'VANCOUVER';
+  src: url('/fonts/VANCOUVER.woff2') format('woff2'),
+       url('/fonts/VANCOUVER.woff') format('woff'),
+       url('/fonts/VANCOUVER.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'WestCoast';
+  src: url('/fonts/WestCoast.woff2') format('woff2'),
+       url('/fonts/WestCoast.woff') format('woff'),
+       url('/fonts/WestCoast.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+

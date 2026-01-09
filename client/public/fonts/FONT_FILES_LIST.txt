@@ -1,0 +1,56 @@
+FONT FILES CHECKLIST
+====================
+
+Copy this list and check off each file as you add it to the fonts/ directory.
+
+SCRIPT/HANDWRITTEN FONTS (29 files):
+[ ] Alexa.woff2
+[ ] Barcelona.woff2 ⭐ DEFAULT
+[ ] Bayview.woff2
+[ ] Amsterdam.woff2
+[ ] Florence.woff2 ✨ NEW
+[ ] Greenworld.woff2
+[ ] LazySunday.woff2 ✨ NEW (note: no space)
+[ ] NewCursive.woff2
+[ ] NottingHill.woff2 ✨ NEW (note: no space)
+[ ] Odessa.woff2 ✨ NEW
+[ ] Vintage.woff2
+[ ] Venetican.woff2
+FONT FILES CHECKLIST
+====================
+
+Copy this list and check off each file as you add it to the fonts/ directory.
+
+SELECTED FONT FILES (keep these in `public/fonts`):
+
+Script / Handwritten:
+[ ] Alexa.woff2
+[ ] Amanda.woff2
+[ ] Amsterdam.woff2
+[ ] Barcelona.woff2  (default)
+[ ] Bayview.woff2
+[ ] Florence.woff2
+[ ] LazySunday.woff2
+[ ] NewCursive.woff2
+[ ] Odessa.woff2
+[ ] Venetian.woff2
+[ ] Vintage.woff2
+[ ] LoveNote.woff2
+
+Modern / Sans-serif:
+[ ] LOSANGELES.woff2
+[ ] SIMPLICITY.woff2
+[ ] DuneRise.woff2
+
+Outline / Neon:
+[ ] Bellview.woff2
+[ ] LOVENEON.woff2
+[ ] NEONGLOW.woff2
+[ ] Submarine.woff2
+
+IMPORTANT NOTES:
+- File names are CASE-SENSITIVE
+- Use the exact names above (no extra spaces)
+- Prefer .woff2 for best performance
+[ ] Mayfair.woff2
+
