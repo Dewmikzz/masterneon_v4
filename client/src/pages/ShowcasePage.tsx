@@ -26,6 +26,43 @@ const tagMap: Record<string, ShowcaseTag[]> = {
   'hb-cursive': ['Events', 'Names'],
   'hb-modern': ['Events'],
   'ha-heart': ['Events'],
+}
+
+const showcaseItems: ShowcaseItem[] = defaultTemplates.map((template) => ({
+  label: template.label,
+  value: template.value,
+  imageUrl: template.imageUrl,
+  description: template.text || template.label,
+  tags: tagMap[template.value] || ['Logos'],
+}))
+
+const ShowcasePage = () => {
+  const [activeTag, setActiveTag] = useState<ShowcaseTag | 'All'>('All')
+  const [search, setSearch] = useState('')
+  const [selected, setSelected] = useState(showcaseItems[0])
+
+  const availableTags = useMemo(() => {
+    const tags = new Set<ShowcaseTag | 'All'>(['All'])
+    showcaseItems.forEach((item) => {
+      item.tags.forEach((tag) => tags.add(tag))
+    })
+    return Array.from(tags)
+  }, [])
+
+  const filteredItems = useMemo(() => {
+    return showcaseItems.filter((item) => {
+      const matchesTag = activeTag === 'All' || item.tags.includes(activeTag as ShowcaseTag)
+      const matchesSearch =
+        search === '' ||
+        item.label.toLowerCase().includes(search.toLowerCase()) ||
+        item.description.toLowerCase().includes(search.toLowerCase())
+      return matchesTag && matchesSearch
+    })
+  }, [activeTag, search])
+
+  return (
+    <div className="min-h-screen bg-black text-white">
+      <section className="relative overflow-hidden border-b border-white/10 px-4 py-12 md:px-8 lg:px-12">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,77,240,0.12),transparent_40%),radial-gradient(circle_at_80%_10%,rgba(0,194,255,0.12),transparent_40%)]" />
         <div className="relative grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
           <div className="space-y-4">
@@ -52,11 +89,11 @@ const tagMap: Record<string, ShowcaseTag[]> = {
               <p className="font-semibold text-white">{selected.label}</p>
               <p className="text-white/60">{selected.description}</p>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      <section className="space-y-6" id="showcase-grid">
+      <section className="space-y-6 px-4 py-12 md:px-8 lg:px-12" id="showcase-grid">
         <div className="flex flex-wrap items-center gap-3">
           {availableTags.map((tag) => (
             <button
@@ -118,7 +155,6 @@ const tagMap: Record<string, ShowcaseTag[]> = {
                     <p className="text-sm font-semibold text-white">{item.label}</p>
                     <p className="text-xs text-white/60">{item.description}</p>
                   </div>
-                  {/* 'Selected' badge removed per request */}
                 </div>
               </button>
             </motion.div>
@@ -135,3 +171,4 @@ const tagMap: Record<string, ShowcaseTag[]> = {
   )
 }
 
+export default ShowcasePage
