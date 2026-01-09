@@ -91,9 +91,18 @@ const getEmailTemplate = (title, content, footerText = '© 2026 Master Neon. All
 `
 
 const sendNeonRequestEmail = async (request) => {
+  console.log('📧 sendNeonRequestEmail called')
+  console.log('Email config check:', {
+    hasSMTP_USER: !!process.env.SMTP_USER,
+    hasSMTP_PASS: !!process.env.SMTP_PASS,
+    hasDESIGNER_EMAIL: !!process.env.DESIGNER_EMAIL,
+    hasSENDGRID_API_KEY: !!process.env.SENDGRID_API_KEY,
+  })
+
   if (!isEmailConfigured()) {
-    console.log('⚠️ Email not configured. Skipping neon request email.')
-    return
+    const errorMsg = 'Email not configured. Missing required environment variables: SMTP_USER, SMTP_PASS, or DESIGNER_EMAIL'
+    console.error('❌', errorMsg)
+    throw new Error(errorMsg)
   }
 
   const attachment = []
@@ -185,31 +194,58 @@ const sendNeonRequestEmail = async (request) => {
   const html = getEmailTemplate('New Design Request', content)
 
   try {
-    const mailOptions = {
-      from: `Master Neon Builder <${process.env.SMTP_USER}>`,
-      to: process.env.DESIGNER_EMAIL,
-      subject: `New Request: ${request.customerName}`,
-      html,
-      attachments: attachment.length > 0 ? attachment.map(a => ({ filename: a.filename, content: Buffer.from(a.content, 'base64') })) : undefined,
-    }
+    console.log('📤 Preparing to send email...')
+    console.log('To:', process.env.DESIGNER_EMAIL)
+    console.log('From:', process.env.SMTP_USER)
+    console.log('Attachments:', attachment.length)
 
     if (sgMail) {
-      mailOptions.from = process.env.SMTP_USER || process.env.FROM_EMAIL || 'no-reply@masterneon.com'
-      // SendGrid expects content string for attachments, not Buffer
-      mailOptions.attachments = attachment.map(a => ({
-        content: a.content,
-        filename: a.filename,
-        type: a.filename.endsWith('.pdf') ? 'application/pdf' : 'image/png',
-        disposition: 'attachment',
-      }))
-      await sgMail.send(mailOptions)
+      // SendGrid format
+      const msg = {
+        to: process.env.DESIGNER_EMAIL,
+        from: process.env.SMTP_USER || process.env.FROM_EMAIL || 'no-reply@masterneon.com',
+        subject: `New Request: ${request.customerName}`,
+        html,
+        attachments: attachment.length > 0 ? attachment.map(a => ({
+          content: a.content,
+          filename: a.filename,
+          type: a.filename.endsWith('.pdf') ? 'application/pdf' : 'image/png',
+          disposition: 'attachment',
+        })) : [],
+      }
+      
+      console.log('📤 Sending via SendGrid...')
+      const result = await sgMail.send(msg)
       console.log('✅ Neon request email sent via SendGrid')
+      console.log('SendGrid response status:', result[0]?.statusCode)
+      return
     } else {
-      await transporter.sendMail(mailOptions)
+      // SMTP format
+      const mailOptions = {
+        from: `Master Neon Builder <${process.env.SMTP_USER}>`,
+        to: process.env.DESIGNER_EMAIL,
+        subject: `New Request: ${request.customerName}`,
+        html,
+        attachments: attachment.length > 0 ? attachment.map(a => ({ 
+          filename: a.filename, 
+          content: Buffer.from(a.content, 'base64') 
+        })) : undefined,
+      }
+
+      console.log('📤 Sending via SMTP...')
+      const info = await transporter.sendMail(mailOptions)
       console.log('✅ Neon request email sent via SMTP')
+      console.log('SMTP message ID:', info.messageId)
+      return
     }
   } catch (err) {
     console.error('❌ Error sending email:', err.message)
+    console.error('Error details:', {
+      name: err.name,
+      code: err.code,
+      response: err.response ? JSON.stringify(err.response) : undefined,
+      stack: err.stack,
+    })
     throw err
   }
 }

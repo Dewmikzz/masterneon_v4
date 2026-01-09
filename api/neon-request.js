@@ -94,7 +94,12 @@ module.exports = async (req, res) => {
     // Attempt to send notification email
     try {
       console.log('📧 Sending design request email to designer...')
-      console.log('Designer email:', process.env.DESIGNER_EMAIL)
+      console.log('Environment check:', {
+        DESIGNER_EMAIL: process.env.DESIGNER_EMAIL ? 'SET' : 'MISSING',
+        SMTP_USER: process.env.SMTP_USER ? 'SET' : 'MISSING',
+        SMTP_PASS: process.env.SMTP_PASS ? 'SET' : 'MISSING',
+        SENDGRID_API_KEY: process.env.SENDGRID_API_KEY ? 'SET' : 'MISSING',
+      })
       console.log('Customer:', customerName, email)
       console.log('Design category:', config?.category)
       
@@ -108,21 +113,21 @@ module.exports = async (req, res) => {
       })
     } catch (emailError) {
       const errorMessage = emailError && emailError.message ? emailError.message : 'Unknown error'
-      console.error('Failed to send neon request email:', errorMessage)
+      const errorCode = emailError && emailError.code ? emailError.code : 'UNKNOWN'
+      console.error('❌ Failed to send neon request email:', errorMessage)
+      console.error('Error code:', errorCode)
+      console.error('Full error:', emailError)
 
-      if (errorMessage.includes('not configured') || errorMessage.includes('SMTP')) {
-        return res.status(200).json({
-          success: true,
-          message: 'Design request received. A designer will contact you within 1 business day.',
-          warning: 'Email notification is not configured. Please check your SMTP settings.',
-        })
-      } else {
-        return res.status(200).json({
-          success: true,
-          message: 'Design request received. A designer will contact you within 1 business day.',
-          warning: 'Email notification may have failed, but your request was logged.',
-        })
-      }
+      // Still return success to user, but log the error
+      return res.status(200).json({
+        success: true,
+        message: 'Design request received. A designer will contact you within 1 business day.',
+        warning: errorMessage.includes('not configured') 
+          ? 'Email notification is not configured. Please check your SMTP/SendGrid settings in Vercel environment variables.'
+          : `Email notification failed (${errorCode}). Please check Vercel logs for details.`,
+        emailSent: false,
+        error: process.env.NODE_ENV === 'development' ? errorMessage : undefined,
+      })
     }
   } catch (err) {
     console.error('Unexpected error handling neon request:', err)
