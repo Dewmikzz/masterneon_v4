@@ -311,14 +311,21 @@ const BuilderPage = () => {
         }
       }
 
-      const response = await api.post('/neon-request', {
+      const requestPayload = {
         ...customerDetails,
         config,
         imagePreview,
         pdfBase64,
         invoicePdfBase64,
         timestamp: new Date().toISOString(),
-      })
+      }
+      
+      console.log('📤 Sending design request with attachments:')
+      console.log('- Design PDF:', pdfBase64 ? `Yes (${Math.round(pdfBase64.length / 1024)}KB)` : 'No')
+      console.log('- Invoice PDF:', invoicePdfBase64 ? `Yes (${Math.round(invoicePdfBase64.length / 1024)}KB)` : 'No')
+      console.log('- Image Preview:', imagePreview ? `Yes (${Math.round(imagePreview.length / 1024)}KB)` : 'No')
+      
+      const response = await api.post('/neon-request', requestPayload)
 
       const responseData = response?.data || {}
       setStatus({
