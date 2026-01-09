@@ -39,7 +39,6 @@ const isEmailConfigured = () => {
   )
 }
 
-<<<<<<< HEAD
 const getEmailTemplate = (title, content, footerText = '© 2026 Master Neon. All rights reserved.') => `
 <!DOCTYPE html>
 <html>
@@ -106,39 +105,10 @@ const sendNeonRequestEmail = async (request) => {
     })
   }
 
-=======
-const sendNeonRequestEmail = async (request) => {
-  if (!isEmailConfigured()) {
-    console.log('⚠️ Email not configured. Skipping neon request email.')
-    console.log('Request details:', {
-      customerName: request.customerName,
-      email: request.email,
-      category: request.config?.category,
-    })
-    return
-  }
-
-  const attachment =
-    request.imagePreview && request.imagePreview.startsWith('data:image')
-      ? [
-          {
-            filename: 'neon-preview.png',
-            content: request.imagePreview.split(';base64,').pop(),
-            encoding: 'base64',
-          },
-        ]
-      : []
-
-  // Attach generated PDF if provided (expecting raw base64 string)
->>>>>>> 4e2716b47bba5627e9fad37c38b846ac6511e62a
   if (request.pdfBase64) {
     try {
       const pdfBase64 = typeof request.pdfBase64 === 'string' ? request.pdfBase64.trim() : null
       if (pdfBase64 && pdfBase64.length > 0) {
-<<<<<<< HEAD
-=======
-        // Remove data URI prefix if present
->>>>>>> 4e2716b47bba5627e9fad37c38b846ac6511e62a
         const cleanBase64 = pdfBase64.replace(/^data:application\/pdf;base64,/, '')
         if (cleanBase64.length > 0) {
           attachment.push({
@@ -148,7 +118,6 @@ const sendNeonRequestEmail = async (request) => {
           })
         }
       }
-<<<<<<< HEAD
     } catch (e) {
       console.error('Error processing PDF attachment:', e.message)
     }
@@ -220,115 +189,7 @@ const sendNeonRequestEmail = async (request) => {
       console.log('✅ Neon request email sent via SMTP')
     }
   } catch (err) {
-    // Error handling logic (persist to disk) preserved but simplified for brevity in this update
     console.error('❌ Error sending email:', err.message)
-    // ... file persistence logic can remain if needed, but for now focusing on the template update
-=======
-    } catch (pdfError) {
-      console.error('Error processing PDF attachment:', pdfError.message)
-      // Continue without PDF attachment if there's an error
-    }
-  }
-
-  // Build HTML based on category
-  let designDetails = ''
-  if (request.config?.category === 'name') {
-    designDetails = `
-      <p><strong>Category:</strong> Name Sign</p>
-      <p><strong>Text:</strong> ${request.config.text}</p>
-      <p><strong>Font:</strong> ${request.config.font}</p>
-      <p><strong>Color:</strong> ${request.config.color}</p>
-      <p><strong>Size:</strong> ${request.config.size}</p>
-    `
-  } else if (request.config?.category === 'logo') {
-    designDetails = `
-      <p><strong>Category:</strong> Logo Sign</p>
-      <p><strong>Type:</strong> ${request.config.imageData ? 'Uploaded Image' : `Emoji: ${request.config.emoji}`}</p>
-      <p><strong>Color:</strong> ${request.config.color}</p>
-      <p><strong>Brightness:</strong> ${request.config.brightness}%</p>
-      <p><strong>Size:</strong> ${request.config.size}</p>
-    `
-  } else if (request.config?.category === 'default') {
-    designDetails = `
-      <p><strong>Category:</strong> Default Design</p>
-      <p><strong>Template:</strong> ${request.config.template}</p>
-      <p><strong>Color:</strong> ${request.config.color}</p>
-      <p><strong>Size:</strong> ${request.config.size}</p>
-    `
-  }
-
-  const html = `
-    <h2>New Neon Custom Design Request</h2>
-    <h3>Customer Details</h3>
-    <p><strong>Name:</strong> ${request.customerName}</p>
-    <p><strong>Email:</strong> ${request.email}</p>
-    <p><strong>Phone:</strong> ${request.phone || 'Not provided'}</p>
-    ${request.notes ? `<p><strong>Notes:</strong> ${request.notes}</p>` : ''}
-    
-    <h3>Neon Sign Details</h3>
-    ${designDetails}
-    
-    <p><strong>Submitted:</strong> ${request.timestamp || new Date().toISOString()}</p>
-  `
-
-  try {
-    if (sgMail) {
-      const msg = {
-        from: process.env.SMTP_USER || process.env.FROM_EMAIL || 'no-reply@masterneon.com',
-        to: process.env.DESIGNER_EMAIL,
-        subject: 'New Neon Custom Design Request',
-        html,
-        attachments: attachment.map((a) => ({
-          content: a.content,
-          filename: a.filename,
-          type: a.contentType || 'application/octet-stream',
-          disposition: 'attachment',
-        })),
-      }
-      await sgMail.send(msg)
-      console.log('✅ Neon request email sent successfully via SendGrid')
-      console.log('📬 Email sent to:', process.env.DESIGNER_EMAIL)
-      console.log('📎 Attachments:', attachment.length, 'file(s)')
-    } else {
-      await transporter.sendMail({
-        from: `Master Neon Builder <${process.env.SMTP_USER}>`,
-        to: process.env.DESIGNER_EMAIL,
-        subject: 'New Neon Custom Design Request',
-        html,
-        attachments: attachment.length > 0 ? attachment.map((a) => ({ filename: a.filename, content: Buffer.from(a.content, 'base64') })) : undefined,
-      })
-      console.log('✅ Neon request email sent successfully via SMTP')
-      console.log('📬 Email sent to:', process.env.DESIGNER_EMAIL)
-      console.log('📎 Attachments:', attachment.length, 'file(s)')
-    }
-  } catch (err) {
-    // Log full error object for diagnostics
-    console.error('❌ Error sending neon request email (full error):', err)
-
-    // Ensure we persist the failed email payload so designers can be notified manually
-    try {
-      const emailsDir = path.join(__dirname, '..', '..', 'emails')
-      if (!fs.existsSync(emailsDir)) fs.mkdirSync(emailsDir, { recursive: true })
-      const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
-      const filename = `neon-request-${timestamp}.json`
-      const payload = {
-        request,
-        html,
-        attachments: attachment.map((a) => ({ filename: a.filename, content: a.content, encoding: a.encoding || 'base64' })),
-        error: {
-          message: err && err.message ? err.message : String(err),
-          code: err && err.code ? err.code : undefined,
-          response: err && err.response ? err.response : undefined,
-        },
-      }
-      fs.writeFileSync(path.join(emailsDir, filename), JSON.stringify(payload, null, 2), 'utf8')
-      console.log(`Saved failed email payload to ${path.join('server', 'emails', filename)}`)
-    } catch (fsErr) {
-      console.error('Failed to write failed email payload to disk:', fsErr)
-    }
-
-    // Re-throw so callers can decide how to respond, preserving original error when possible
->>>>>>> 4e2716b47bba5627e9fad37c38b846ac6511e62a
     throw err
   }
 }
@@ -386,8 +247,10 @@ setTimeout(() => void processQueuedEmails(), 5 * 1000)
 setInterval(() => void processQueuedEmails(), 60 * 1000)
 
 const sendContactEmail = async (message) => {
-<<<<<<< HEAD
-  if (!isEmailConfigured()) return
+  if (!isEmailConfigured()) {
+    console.log('⚠️ Email not configured. Skipping contact email.')
+    return
+  }
 
   const content = `
     <h2 style="margin-top: 0; font-size: 20px; font-weight: normal; margin-bottom: 20px; color: #ffffff;">New Contact Message</h2>
@@ -406,40 +269,17 @@ const sendContactEmail = async (message) => {
   `
 
   const html = getEmailTemplate('New Contact Message', content)
-=======
-  if (!isEmailConfigured()) {
-    console.log('⚠️ Email not configured. Skipping contact email.')
-    console.log('Contact message:', {
-      name: message.name,
-      email: message.email,
-    })
-    return
-  }
->>>>>>> 4e2716b47bba5627e9fad37c38b846ac6511e62a
 
   try {
     await transporter.sendMail({
       from: `Master Neon Website <${process.env.SMTP_USER}>`,
       to: process.env.DESIGNER_EMAIL || process.env.ADMIN_EMAIL,
-<<<<<<< HEAD
       subject: `Contact: ${message.name}`,
       html,
     })
+    console.log('✅ Contact email sent successfully')
   } catch (err) {
     console.error('Error sending contact email:', err.message)
-=======
-      subject: `Contact form — ${message.name}`,
-      html: `
-        <h3>Contact Message</h3>
-        <p><strong>Name:</strong> ${message.name}</p>
-        <p><strong>Email:</strong> ${message.email}</p>
-        <p><strong>Phone:</strong> ${message.phone || 'Not provided'}</p>
-        <p><strong>Message:</strong><br/>${message.message}</p>
-      `,
-    })
-  } catch (err) {
-    console.error('Error sending contact email:', err && err.message ? err.message : err)
->>>>>>> 4e2716b47bba5627e9fad37c38b846ac6511e62a
     throw err
   }
 }
