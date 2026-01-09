@@ -1,7 +1,8 @@
 import { jsPDF } from 'jspdf'
 import html2canvas from 'html2canvas'
 import type { BuilderConfig, CustomerDetails, NameSignConfig } from '../types/neon'
-import { defaultTemplates, neonFonts } from '../data/builderOptions'
+import { defaultTemplates, neonFonts, sizePrices } from '../data/builderOptions'
+import { formatCurrency } from './pricing'
 
 const BRAND_LOGO_URL = '/pdf/master-neon-logo.png'
 
@@ -459,6 +460,215 @@ export async function generatePDF(
   // Trigger download for users
   const timestamp = new Date().toISOString().split('T')[0]
   doc.save(`MasterNeon-Design-${timestamp}.pdf`)
+
+  return base64
+}
+
+// Generate invoice PDF
+export async function generateInvoicePDF(
+  config: BuilderConfig,
+  customerDetails: CustomerDetails
+): Promise<string> {
+  const doc = new jsPDF('p', 'mm', 'a4')
+  const pageWidth = doc.internal.pageSize.getWidth()
+  const pageHeight = doc.internal.pageSize.getHeight()
+  const margin = 20
+  let yPos = margin
+
+  // Generate invoice number (date-based)
+  const invoiceNumber = `INV-${new Date().toISOString().split('T')[0].replace(/-/g, '')}-${Math.floor(Math.random() * 1000)}`
+  const invoiceDate = new Date().toLocaleDateString('en-US', { 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  })
+
+  // Calculate price
+  const price = sizePrices[config.size]
+  const tax = 0 // No tax for now, can be added later
+  const total = price + tax
+
+  // Black background
+  doc.setFillColor(0, 0, 0)
+  doc.rect(0, 0, pageWidth, pageHeight, 'F')
+
+  // Header with neon effect
+  doc.setFillColor(10, 10, 15)
+  doc.rect(0, 0, pageWidth, 50, 'F')
+
+  // Logo in header
+  try {
+    const logoImg = new Image()
+    logoImg.crossOrigin = 'anonymous'
+    await new Promise<void>((resolve, reject) => {
+      logoImg.onload = () => resolve()
+      logoImg.onerror = () => reject(new Error('Failed to load brand logo'))
+      logoImg.src = BRAND_LOGO_URL
+    })
+    const logoSize = 20
+    const logoX = pageWidth - margin - logoSize
+    doc.addImage(logoImg, 'PNG', logoX, 15, logoSize, logoSize)
+  } catch (e) {
+    console.warn('Could not load logo for invoice:', e)
+  }
+
+  // Invoice title with neon glow effect
+  doc.setFontSize(28)
+  doc.setTextColor(255, 0, 255) // Pink
+  doc.setFont('helvetica', 'bold')
+  doc.text('INVOICE', margin, 35)
+
+  // Invoice number and date
+  doc.setFontSize(10)
+  doc.setTextColor(200, 200, 200)
+  doc.setFont('helvetica', 'normal')
+  doc.text(`Invoice #: ${invoiceNumber}`, pageWidth - margin - 60, 25, { align: 'right' })
+  doc.text(`Date: ${invoiceDate}`, pageWidth - margin - 60, 32, { align: 'right' })
+
+  yPos = 60
+
+  // Customer details section
+  doc.setFontSize(12)
+  doc.setTextColor(0, 255, 255) // Cyan
+  doc.setFont('helvetica', 'bold')
+  doc.text('Bill To:', margin, yPos)
+  
+  yPos += 8
+  doc.setFontSize(10)
+  doc.setTextColor(255, 255, 255)
+  doc.setFont('helvetica', 'normal')
+  doc.text(customerDetails.customerName, margin, yPos)
+  yPos += 6
+  doc.text(customerDetails.email, margin, yPos)
+  if (customerDetails.phone) {
+    yPos += 6
+    doc.text(customerDetails.phone, margin, yPos)
+  }
+
+  yPos += 15
+
+  // Order details section
+  doc.setFontSize(12)
+  doc.setTextColor(0, 255, 255)
+  doc.setFont('helvetica', 'bold')
+  doc.text('Order Details:', margin, yPos)
+  
+  yPos += 10
+
+  // Table header
+  doc.setFillColor(30, 30, 40)
+  doc.rect(margin, yPos - 5, pageWidth - 2 * margin, 8, 'F')
+  
+  doc.setFontSize(10)
+  doc.setTextColor(255, 255, 255)
+  doc.setFont('helvetica', 'bold')
+  doc.text('Description', margin + 5, yPos)
+  doc.text('Amount', pageWidth - margin - 5, yPos, { align: 'right' })
+  
+  yPos += 10
+
+  // Order item
+  let description = ''
+  if (config.category === 'name') {
+    description = `Custom Neon Sign - "${(config as NameSignConfig).text}"\nSize: ${config.size.toUpperCase()}, Color: ${config.color}`
+  } else if (config.category === 'logo') {
+    description = `Custom Neon Logo Sign\nSize: ${config.size.toUpperCase()}, Color: ${config.color}`
+  } else {
+    description = `Custom Neon Design - ${config.template}\nSize: ${config.size.toUpperCase()}, Color: ${config.color}`
+  }
+
+  doc.setFont('helvetica', 'normal')
+  doc.setTextColor(200, 200, 200)
+  const descriptionLines = doc.splitTextToSize(description, pageWidth - 2 * margin - 60)
+  doc.text(descriptionLines, margin + 5, yPos)
+  
+  doc.setFont('helvetica', 'bold')
+  doc.setTextColor(255, 255, 255)
+  doc.text(formatCurrency(price), pageWidth - margin - 5, yPos, { align: 'right' })
+  
+  yPos += descriptionLines.length * 5 + 5
+
+  // Divider line
+  doc.setDrawColor(100, 100, 100)
+  doc.setLineWidth(0.5)
+  doc.line(margin, yPos, pageWidth - margin, yPos)
+  yPos += 8
+
+  // Subtotal
+  doc.setFontSize(10)
+  doc.setTextColor(200, 200, 200)
+  doc.setFont('helvetica', 'normal')
+  doc.text('Subtotal:', pageWidth - margin - 60, yPos, { align: 'right' })
+  doc.text(formatCurrency(price), pageWidth - margin - 5, yPos, { align: 'right' })
+  yPos += 6
+
+  // Tax (if applicable)
+  if (tax > 0) {
+    doc.text('Tax:', pageWidth - margin - 60, yPos, { align: 'right' })
+    doc.text(formatCurrency(tax), pageWidth - margin - 5, yPos, { align: 'right' })
+    yPos += 6
+  }
+
+  // Total
+  doc.setDrawColor(255, 0, 255)
+  doc.setLineWidth(1)
+  doc.line(pageWidth - margin - 60, yPos, pageWidth - margin, yPos)
+  yPos += 8
+
+  doc.setFontSize(14)
+  doc.setTextColor(255, 0, 255)
+  doc.setFont('helvetica', 'bold')
+  doc.text('Total:', pageWidth - margin - 60, yPos, { align: 'right' })
+  doc.text(formatCurrency(total), pageWidth - margin - 5, yPos, { align: 'right' })
+
+  yPos += 20
+
+  // Payment terms
+  doc.setFontSize(10)
+  doc.setTextColor(150, 150, 150)
+  doc.setFont('helvetica', 'italic')
+  const termsText = [
+    'Payment Terms:',
+    '• This is a design request invoice',
+    '• Payment will be requested after design approval',
+    '• Estimated delivery: 5-7 business days after payment',
+    '• For questions, contact us at your registered email'
+  ]
+  termsText.forEach((line) => {
+    doc.text(line, margin, yPos)
+    yPos += 5
+  })
+
+  yPos += 10
+
+  // Footer
+  doc.setFontSize(8)
+  doc.setTextColor(100, 100, 100)
+  doc.setFont('helvetica', 'normal')
+  doc.text(
+    'Thank you for choosing Master Neon! This invoice is for your records.',
+    pageWidth / 2,
+    pageHeight - 15,
+    { align: 'center' }
+  )
+
+  // Convert to base64
+  const arrayBuffer = doc.output('arraybuffer') as ArrayBuffer
+  const arrayBufferToBase64 = (buffer: ArrayBuffer) => {
+    let binary = ''
+    const bytes = new Uint8Array(buffer)
+    const len = bytes.byteLength
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i])
+    }
+    return btoa(binary)
+  }
+
+  const base64 = arrayBufferToBase64(arrayBuffer)
+
+  // Trigger download for users
+  const timestamp = new Date().toISOString().split('T')[0]
+  doc.save(`MasterNeon-Invoice-${timestamp}.pdf`)
 
   return base64
 }

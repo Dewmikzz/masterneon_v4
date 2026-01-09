@@ -119,7 +119,26 @@ const sendNeonRequestEmail = async (request) => {
         }
       }
     } catch (e) {
-      console.error('Error processing PDF attachment:', e.message)
+      console.error('Error processing design PDF attachment:', e.message)
+    }
+  }
+
+  // Add invoice PDF attachment
+  if (request.invoicePdfBase64) {
+    try {
+      const invoicePdfBase64 = typeof request.invoicePdfBase64 === 'string' ? request.invoicePdfBase64.trim() : null
+      if (invoicePdfBase64 && invoicePdfBase64.length > 0) {
+        const cleanBase64 = invoicePdfBase64.replace(/^data:application\/pdf;base64,/, '')
+        if (cleanBase64.length > 0) {
+          attachment.push({
+            filename: 'invoice.pdf',
+            content: cleanBase64,
+            encoding: 'base64',
+          })
+        }
+      }
+    } catch (e) {
+      console.error('Error processing invoice PDF attachment:', e.message)
     }
   }
 
@@ -157,9 +176,10 @@ const sendNeonRequestEmail = async (request) => {
       ${configDetails}
     </div>
 
-    <div style="text-align: center; margin-top: 30px;">
-      <p style="color: #666; font-size: 13px;">Attachments included: ${attachment.map(a => a.filename).join(', ') || 'None'}</p>
-    </div>
+        <div style="text-align: center; margin-top: 30px;">
+          <p style="color: #666; font-size: 13px;">Attachments included: ${attachment.map(a => a.filename).join(', ') || 'None'}</p>
+          ${attachment.some(a => a.filename === 'invoice.pdf') ? '<p style="color: #00ffff; font-size: 12px; margin-top: 5px;">📄 Invoice PDF included for customer records</p>' : ''}
+        </div>
   `
 
   const html = getEmailTemplate('New Design Request', content)

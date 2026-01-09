@@ -6,7 +6,7 @@ import NeonButton from '../components/common/NeonButton'
 import { neonColorOptions, sizeOptions, defaultTemplates, sizeMaxLetters, getDefaultFont } from '../data/builderOptions'
 import FontDropdown from '../components/builder/FontDropdown'
 import type { BuilderConfig, CustomerDetails, NameSignConfig, LogoSignConfig } from '../types/neon'
-import { generatePDF } from '../utils/pdfGenerator'
+import { generatePDF, generateInvoicePDF } from '../utils/pdfGenerator'
 import api from '../services/api'
 
 const BuilderPage = () => {
@@ -54,6 +54,7 @@ const BuilderPage = () => {
     phone?: string
   }>({})
   const [generatedPdfBase64, setGeneratedPdfBase64] = useState<string | null>(null)
+  const [generatedInvoicePdfBase64, setGeneratedInvoicePdfBase64] = useState<string | null>(null)
   const [templateModalPdfBase64, setTemplateModalPdfBase64] = useState<string | null>(null)
   const [selectedTemplateForModal, setSelectedTemplateForModal] = useState<typeof defaultTemplates[0] | null>(null)
   const [templateModalConfig, setTemplateModalConfig] = useState<{
@@ -272,19 +273,32 @@ const BuilderPage = () => {
         setGeneratedPdfBase64(pdfBase64)
       }
 
-      // Estimate payload size and skip PDF if too large (Vercel limit is ~4.5MB)
+      // Generate invoice PDF
+      let invoicePdfBase64 = generatedInvoicePdfBase64
+      if (!invoicePdfBase64) {
+        invoicePdfBase64 = await generateInvoicePDF(config, customerDetails)
+        setGeneratedInvoicePdfBase64(invoicePdfBase64)
+      }
+
+      // Estimate payload size and skip PDFs if too large (Vercel limit is ~4.5MB)
       const payloadSize = JSON.stringify({
         ...customerDetails,
         config,
         imagePreview,
         pdfBase64,
+        invoicePdfBase64,
       }).length
 
-      // If payload is approaching limit (3.5MB), skip PDF attachment
+      // If payload is approaching limit (3.5MB), skip PDF attachments
       const maxPayloadSize = 3.5 * 1024 * 1024 // 3.5MB to leave buffer
-      if (payloadSize > maxPayloadSize && pdfBase64) {
-        console.warn('Payload too large, skipping PDF attachment to prevent 413 error')
-        pdfBase64 = null
+      if (payloadSize > maxPayloadSize) {
+        console.warn('Payload too large, skipping PDF attachments to prevent 413 error')
+        if (pdfBase64) {
+          pdfBase64 = null
+        }
+        if (invoicePdfBase64) {
+          invoicePdfBase64 = null
+        }
       }
 
       const response = await api.post('/neon-request', {
@@ -292,6 +306,7 @@ const BuilderPage = () => {
         config,
         imagePreview,
         pdfBase64,
+        invoicePdfBase64,
         timestamp: new Date().toISOString(),
       })
 
@@ -301,8 +316,9 @@ const BuilderPage = () => {
         message: responseData.message || 'Sent! A Master Neon designer will reply with proofs within 1 business day.',
       })
       setCustomerDetails({ customerName: '', email: '', phone: '', notes: '' })
-      // Clear stored PDF after successful send
+      // Clear stored PDFs after successful send
       setGeneratedPdfBase64(null)
+      setGeneratedInvoicePdfBase64(null)
     } catch (error: any) {
       // Handle 413 Payload Too Large error specifically
       if (error?.response?.status === 413) {

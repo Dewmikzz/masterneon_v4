@@ -27,9 +27,9 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const { customerName, email, phone, config, imagePreview, notes, timestamp, pdfBase64 } = req.body
+    const { customerName, email, phone, config, imagePreview, notes, timestamp, pdfBase64, invoicePdfBase64 } = req.body
     
-    // Optimize payload: Remove PDF if it's too large (keep only essential data)
+    // Optimize payload: Remove PDFs if they're too large (keep only essential data)
     let optimizedPdfBase64 = pdfBase64
     if (pdfBase64) {
       // Remove data URI prefix to get actual base64 length
@@ -39,8 +39,22 @@ module.exports = async (req, res) => {
       
       // PDF is larger than 1.5MB base64, don't send it (email will still work)
       if (base64Length > 1.5 * 1024 * 1024) {
-        console.log('PDF too large (' + Math.round(base64Length / 1024) + 'KB), skipping attachment to reduce payload size')
+        console.log('Design PDF too large (' + Math.round(base64Length / 1024) + 'KB), skipping attachment to reduce payload size')
         optimizedPdfBase64 = null
+      }
+    }
+
+    let optimizedInvoicePdfBase64 = invoicePdfBase64
+    if (invoicePdfBase64) {
+      // Remove data URI prefix to get actual base64 length
+      const base64Length = invoicePdfBase64.includes(',') 
+        ? invoicePdfBase64.split(',')[1].length 
+        : invoicePdfBase64.length
+      
+      // Invoice PDF is larger than 1MB base64, don't send it
+      if (base64Length > 1 * 1024 * 1024) {
+        console.log('Invoice PDF too large (' + Math.round(base64Length / 1024) + 'KB), skipping attachment to reduce payload size')
+        optimizedInvoicePdfBase64 = null
       }
     }
     
@@ -74,6 +88,7 @@ module.exports = async (req, res) => {
       notes: notes || '',
       timestamp: timestamp || new Date().toISOString(),
       pdfBase64: optimizedPdfBase64,
+      invoicePdfBase64: optimizedInvoicePdfBase64,
     }
 
     // Attempt to send notification email
