@@ -129,12 +129,19 @@ const sendNeonRequestEmail = async (request) => {
   }
 
   const attachment = []
+  
+  console.log('📎 Processing attachments...')
+  console.log('- Has imagePreview:', !!request.imagePreview)
+  console.log('- Has pdfBase64:', !!request.pdfBase64)
+  console.log('- Has invoicePdfBase64:', !!request.invoicePdfBase64)
+  
   if (request.imagePreview && request.imagePreview.startsWith('data:image')) {
     attachment.push({
       filename: 'neon-preview.png',
       content: request.imagePreview.split(';base64,').pop(),
       encoding: 'base64',
     })
+    console.log('✅ Added image preview attachment')
   }
 
   if (request.pdfBase64) {
@@ -148,17 +155,30 @@ const sendNeonRequestEmail = async (request) => {
             content: cleanBase64,
             encoding: 'base64',
           })
+          console.log('✅ Added design PDF attachment (' + Math.round(cleanBase64.length / 1024) + 'KB)')
+        } else {
+          console.log('⚠️ Design PDF base64 is empty after cleaning')
         }
+      } else {
+        console.log('⚠️ Design PDF is empty or invalid')
       }
     } catch (e) {
-      console.error('Error processing design PDF attachment:', e.message)
+      console.error('❌ Error processing design PDF attachment:', e.message)
     }
+  } else {
+    console.log('⚠️ No design PDF in request')
   }
 
   // Add invoice PDF attachment
   if (request.invoicePdfBase64) {
     try {
       const invoicePdfBase64 = typeof request.invoicePdfBase64 === 'string' ? request.invoicePdfBase64.trim() : null
+      console.log('📄 Processing invoice PDF:', {
+        exists: !!invoicePdfBase64,
+        length: invoicePdfBase64 ? invoicePdfBase64.length : 0,
+        startsWithData: invoicePdfBase64 ? invoicePdfBase64.startsWith('data:') : false,
+      })
+      
       if (invoicePdfBase64 && invoicePdfBase64.length > 0) {
         const cleanBase64 = invoicePdfBase64.replace(/^data:application\/pdf;base64,/, '')
         if (cleanBase64.length > 0) {
@@ -167,12 +187,25 @@ const sendNeonRequestEmail = async (request) => {
             content: cleanBase64,
             encoding: 'base64',
           })
+          console.log('✅ Added invoice PDF attachment (' + Math.round(cleanBase64.length / 1024) + 'KB)')
+        } else {
+          console.log('⚠️ Invoice PDF base64 is empty after cleaning')
         }
+      } else {
+        console.log('⚠️ Invoice PDF is empty or invalid')
       }
     } catch (e) {
-      console.error('Error processing invoice PDF attachment:', e.message)
+      console.error('❌ Error processing invoice PDF attachment:', e.message)
+      console.error('Error stack:', e.stack)
     }
+  } else {
+    console.log('⚠️ No invoice PDF in request')
   }
+  
+  console.log('📎 Total attachments:', attachment.length)
+  attachment.forEach((att, idx) => {
+    console.log(`  ${idx + 1}. ${att.filename} (${Math.round(att.content.length / 1024)}KB)`)
+  })
 
   // Build HTML Content
   let configDetails = ''

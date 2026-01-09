@@ -29,6 +29,10 @@ module.exports = async (req, res) => {
   try {
     const { customerName, email, phone, config, imagePreview, notes, timestamp, pdfBase64, invoicePdfBase64 } = req.body
     
+    console.log('📦 Received request payload:')
+    console.log('- Has pdfBase64:', !!pdfBase64, pdfBase64 ? `(${Math.round(pdfBase64.length / 1024)}KB)` : '')
+    console.log('- Has invoicePdfBase64:', !!invoicePdfBase64, invoicePdfBase64 ? `(${Math.round(invoicePdfBase64.length / 1024)}KB)` : '')
+    
     // Optimize payload: Remove PDFs if they're too large (keep only essential data)
     let optimizedPdfBase64 = pdfBase64
     if (pdfBase64) {
@@ -37,11 +41,17 @@ module.exports = async (req, res) => {
         ? pdfBase64.split(',')[1].length 
         : pdfBase64.length
       
+      console.log('📄 Design PDF size check:', Math.round(base64Length / 1024) + 'KB')
+      
       // PDF is larger than 1.5MB base64, don't send it (email will still work)
       if (base64Length > 1.5 * 1024 * 1024) {
-        console.log('Design PDF too large (' + Math.round(base64Length / 1024) + 'KB), skipping attachment to reduce payload size')
+        console.log('⚠️ Design PDF too large (' + Math.round(base64Length / 1024) + 'KB), skipping attachment to reduce payload size')
         optimizedPdfBase64 = null
+      } else {
+        console.log('✅ Design PDF size OK, will attach')
       }
+    } else {
+      console.log('⚠️ No design PDF provided')
     }
 
     let optimizedInvoicePdfBase64 = invoicePdfBase64
@@ -51,11 +61,17 @@ module.exports = async (req, res) => {
         ? invoicePdfBase64.split(',')[1].length 
         : invoicePdfBase64.length
       
+      console.log('📄 Invoice PDF size check:', Math.round(base64Length / 1024) + 'KB')
+      
       // Invoice PDF is larger than 1MB base64, don't send it
       if (base64Length > 1 * 1024 * 1024) {
-        console.log('Invoice PDF too large (' + Math.round(base64Length / 1024) + 'KB), skipping attachment to reduce payload size')
+        console.log('⚠️ Invoice PDF too large (' + Math.round(base64Length / 1024) + 'KB), skipping attachment to reduce payload size')
         optimizedInvoicePdfBase64 = null
+      } else {
+        console.log('✅ Invoice PDF size OK, will attach')
       }
+    } else {
+      console.log('⚠️ No invoice PDF provided')
     }
     
     // Optimize image preview: If it's too large, skip it
