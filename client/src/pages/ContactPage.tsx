@@ -123,12 +123,32 @@ const ContactPage = () => {
     setStatus({ type: 'idle', message: '' })
     setValidationErrors({})
     try {
-      await api.post('/contact', form)
+      const response = await api.post('/contact', form)
       setForm({ name: '', email: '', phone: '', message: '' })
       setValidationErrors({})
-      setStatus({ type: 'success', message: "Thanks! We'll respond in 1 business day." })
-    } catch (error) {
-      setStatus({ type: 'error', message: 'Could not send message. Please try again later.' })
+      const responseMessage = response?.data?.message || "Thanks! We'll respond in 1 business day."
+      setStatus({ type: 'success', message: responseMessage })
+    } catch (error: any) {
+      console.error('Contact form error:', error)
+      
+      // Check if it's a validation error from the server
+      if (error?.response?.status === 400 && error?.response?.data?.errors) {
+        const serverErrors = error.response.data.errors
+        const errorMap: { [key: string]: string } = {}
+        serverErrors.forEach((err: { field: string; message: string }) => {
+          errorMap[err.field] = err.message
+        })
+        setValidationErrors(errorMap)
+        const firstError = serverErrors[0]?.message || 'Please check your input and try again.'
+        setStatus({ type: 'error', message: firstError })
+      } else if (error?.response?.data?.message) {
+        // Use server error message if available
+        setStatus({ type: 'error', message: error.response.data.message })
+      } else if (error?.code === 'ERR_NETWORK' || error?.message?.includes('Network')) {
+        setStatus({ type: 'error', message: 'Network error. Please check your connection and try again.' })
+      } else {
+        setStatus({ type: 'error', message: 'Could not send message. Please try again later.' })
+      }
     } finally {
       setIsSubmitting(false)
     }
