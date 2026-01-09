@@ -146,10 +146,27 @@ const sendNeonRequestEmail = async (request) => {
 
   if (request.pdfBase64) {
     try {
-      const pdfBase64 = typeof request.pdfBase64 === 'string' ? request.pdfBase64.trim() : null
+      let pdfBase64 = typeof request.pdfBase64 === 'string' ? request.pdfBase64.trim() : null
+      console.log('📄 Processing design PDF:', {
+        exists: !!pdfBase64,
+        length: pdfBase64 ? pdfBase64.length : 0,
+        startsWithData: pdfBase64 ? pdfBase64.startsWith('data:') : false,
+        firstChars: pdfBase64 ? pdfBase64.substring(0, 50) : '',
+      })
+      
       if (pdfBase64 && pdfBase64.length > 0) {
-        const cleanBase64 = pdfBase64.replace(/^data:application\/pdf;base64,/, '')
-        if (cleanBase64.length > 0) {
+        // Remove data URI prefix if present, otherwise use as-is
+        let cleanBase64 = pdfBase64
+        if (pdfBase64.includes(',')) {
+          // Has data URI prefix, extract base64 part
+          cleanBase64 = pdfBase64.split(',')[1]
+        } else if (pdfBase64.startsWith('data:')) {
+          // Has data prefix but no comma (unlikely but handle it)
+          cleanBase64 = pdfBase64.replace(/^data:[^;]*;base64,/, '')
+        }
+        // If no prefix, use the string as-is (it's already base64)
+        
+        if (cleanBase64 && cleanBase64.length > 0) {
           attachment.push({
             filename: 'design.pdf',
             content: cleanBase64,
@@ -164,6 +181,7 @@ const sendNeonRequestEmail = async (request) => {
       }
     } catch (e) {
       console.error('❌ Error processing design PDF attachment:', e.message)
+      console.error('Error stack:', e.stack)
     }
   } else {
     console.log('⚠️ No design PDF in request')
@@ -172,16 +190,27 @@ const sendNeonRequestEmail = async (request) => {
   // Add invoice PDF attachment
   if (request.invoicePdfBase64) {
     try {
-      const invoicePdfBase64 = typeof request.invoicePdfBase64 === 'string' ? request.invoicePdfBase64.trim() : null
+      let invoicePdfBase64 = typeof request.invoicePdfBase64 === 'string' ? request.invoicePdfBase64.trim() : null
       console.log('📄 Processing invoice PDF:', {
         exists: !!invoicePdfBase64,
         length: invoicePdfBase64 ? invoicePdfBase64.length : 0,
         startsWithData: invoicePdfBase64 ? invoicePdfBase64.startsWith('data:') : false,
+        firstChars: invoicePdfBase64 ? invoicePdfBase64.substring(0, 50) : '',
       })
       
       if (invoicePdfBase64 && invoicePdfBase64.length > 0) {
-        const cleanBase64 = invoicePdfBase64.replace(/^data:application\/pdf;base64,/, '')
-        if (cleanBase64.length > 0) {
+        // Remove data URI prefix if present, otherwise use as-is
+        let cleanBase64 = invoicePdfBase64
+        if (invoicePdfBase64.includes(',')) {
+          // Has data URI prefix, extract base64 part
+          cleanBase64 = invoicePdfBase64.split(',')[1]
+        } else if (invoicePdfBase64.startsWith('data:')) {
+          // Has data prefix but no comma (unlikely but handle it)
+          cleanBase64 = invoicePdfBase64.replace(/^data:[^;]*;base64,/, '')
+        }
+        // If no prefix, use the string as-is (it's already base64)
+        
+        if (cleanBase64 && cleanBase64.length > 0) {
           attachment.push({
             filename: 'invoice.pdf',
             content: cleanBase64,
