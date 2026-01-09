@@ -6,15 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "vercel-build": "npm run build",
-    "preview": "vite preview",
-    "fonts:check": "node scripts/font-tools.js check",
-    "fonts:convert": "node scripts/font-tools.js convert",
-    "fonts:map": "node scripts/font-tools.js map"
+    "preview": "vite preview"
   },
   "devDependencies": {
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.22",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.4",

@@ -1,6 +1,7 @@
 import type { NeonSize } from '../types/neon'
 
 export const neonColorOptions = [
+<<<<<<< HEAD
   { label: 'Warm White', value: '#fef8e7' },
   { label: 'White', value: '#e2e2e2' }, // Slightly off-white for visibility against white backgrounds
   { label: 'Golden Yellow', value: '#ffc107' },
@@ -60,6 +61,35 @@ export const sizeOptions: { label: string; value: NeonSize; description: string;
   { label: 'Small', value: 'small', description: '18 inch - 6 letters only', maxLetters: 6, price: 7500 },
   { label: 'Medium', value: 'medium', description: '24 inch - 8 letters only', maxLetters: 8, price: 9500 },
   { label: 'Large', value: 'large', description: '30 inch - 10 letters only', maxLetters: 10, price: 11500 },
+=======
+  { label: 'Electric Pink', value: '#ff4df0' },
+  { label: 'Ice Blue', value: '#00c2ff' },
+  { label: 'Warm White', value: '#fef8e7' },
+  { label: 'Solar Yellow', value: '#fff95b' },
+  { label: 'Lime Green', value: '#39ff14' },
+  { label: 'Crimson Red', value: '#ff2d55' },
+]
+
+export const neonFonts = [
+  { label: 'Monoton', value: '"Monoton", cursive' },
+  { label: 'Pacifico', value: '"Pacifico", cursive' },
+  { label: 'Neonderthaw', value: '"Neonderthaw", cursive' },
+  { label: 'Orbitron', value: '"Orbitron", sans-serif' },
+  { label: 'Rajdhani', value: '"Rajdhani", sans-serif' },
+  { label: 'Space Grotesk', value: '"Space Grotesk", sans-serif' },
+  { label: 'Great Vibes', value: '"Great Vibes", cursive' },
+  { label: 'Aclonica', value: '"Aclonica", sans-serif' },
+  { label: 'Bungee', value: '"Bungee", cursive' },
+  { label: 'Righteous', value: '"Righteous", cursive' },
+  { label: 'Fredoka One', value: '"Fredoka One", cursive' },
+  { label: 'Lobster', value: '"Lobster", cursive' },
+]
+
+export const sizeOptions: { label: string; value: NeonSize; description: string }[] = [
+  { label: 'Small', value: 'small', description: 'Up to 24 inches wide' },
+  { label: 'Medium', value: 'medium', description: 'Best selling — 36 inches wide' },
+  { label: 'Large', value: 'large', description: 'Statement 48 inches wide' },
+>>>>>>> 4e2716b47bba5627e9fad37c38b846ac6511e62a
 ]
 
 export const sizeMultipliers: Record<NeonSize, number> = {
@@ -68,6 +98,7 @@ export const sizeMultipliers: Record<NeonSize, number> = {
   large: 2,
 }
 
+<<<<<<< HEAD
 export const sizePrices: Record<NeonSize, number> = {
   small: 7500,
   medium: 9500,
@@ -80,6 +111,8 @@ export const sizeMaxLetters: Record<NeonSize, number> = {
   large: 10,
 }
 
+=======
+>>>>>>> 4e2716b47bba5627e9fad37c38b846ac6511e62a
 export const defaultTemplates = [
   {
     label: 'Happy Birthday',
@@ -129,6 +162,7 @@ export const defaultTemplates = [
     text: 'Neon Cat on Moon',
     imageUrl: '/neon-designs/neon-cat-03.png',
   },
+<<<<<<< HEAD
   {
     label: 'Happy Birthday Classic',
     value: 'hb-classic',
@@ -153,6 +187,8 @@ export const defaultTemplates = [
     text: 'Happy Anniversary',
     imageUrl: '/neon-designs/ha-heart.png',
   },
+=======
+>>>>>>> 4e2716b47bba5627e9fad37c38b846ac6511e62a
 ]
 
 export const emojiOptions = [

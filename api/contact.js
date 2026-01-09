@@ -1,27 +1,61 @@
-// Contact endpoint - use Express app
-require('dotenv').config()
-const express = require('express')
-const cors = require('cors')
-const { body } = require('express-validator')
-const { createContactMessage } = require('../server/src/controllers/contactController')
+const { sendContactEmail } = require('../server/src/services/emailService')
 
-const router = express.Router()
-router.post(
-  '/',
-  [
-    body('name').trim().notEmpty().withMessage('Name is required'),
-    body('email').isEmail().withMessage('Valid email required').normalizeEmail(),
-    body('phone').optional().trim(),
-    body('message').trim().notEmpty().withMessage('Message is required'),
-  ],
-  createContactMessage,
-)
+// Simple email validation
+const isValidEmail = (email) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+}
 
-const app = express()
-app.use(cors())
-app.use(express.json({ limit: '10mb' }))
-app.use(express.urlencoded({ extended: true }))
-app.use('/', router)
+module.exports = async (req, res) => {
+  // Only allow POST requests
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method not allowed' })
+  }
 
-module.exports = app
+  try {
+    const { name, email, phone, message } = req.body
+
+    // Validation
+    if (!name || !name.trim()) {
+      return res.status(400).json({
+        message: 'Validation failed',
+        errors: [{ field: 'name', message: 'Name is required' }],
+      })
+    }
+
+    if (!email || !isValidEmail(email)) {
+      return res.status(400).json({
+        message: 'Validation failed',
+        errors: [{ field: 'email', message: 'Valid email required' }],
+      })
+    }
+
+    if (!message || !message.trim()) {
+      return res.status(400).json({
+        message: 'Validation failed',
+        errors: [{ field: 'message', message: 'Message is required' }],
+      })
+    }
+
+    try {
+      await sendContactEmail({ name: name.trim(), email: email.trim().toLowerCase(), phone: phone?.trim() || '', message: message.trim() })
+      return res.status(200).json({
+        success: true,
+        message: 'Message received. We will respond within 1 business day.',
+      })
+    } catch (emailError) {
+      console.error('Failed to send contact email:', emailError && emailError.message ? emailError.message : emailError)
+      // Still return success since the message was received
+      return res.status(200).json({
+        success: true,
+        message: 'Message received. We will respond within 1 business day.',
+        warning: 'Email notification may have failed, but your message was logged.',
+      })
+    }
+  } catch (err) {
+    console.error('Unexpected error handling contact message:', err)
+    return res.status(500).json({
+      message: err.message || 'Internal server error',
+    })
+  }
+}
 

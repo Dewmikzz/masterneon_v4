@@ -59,9 +59,12 @@ const Footer = () => {
               src="/pdf/master-neon-logo.png"
               alt="Master Neon logo"
               className="h-full w-full object-contain p-0 transform scale-110"
+<<<<<<< HEAD
               loading="eager"
               fetchPriority="high"
               decoding="sync"
+=======
+>>>>>>> 4e2716b47bba5627e9fad37c38b846ac6511e62a
             />
           </div>
               <div>

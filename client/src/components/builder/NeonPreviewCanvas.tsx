@@ -23,7 +23,16 @@ const NeonPreviewCanvas = forwardRef<NeonPreviewHandle, BuilderConfig>((config, 
   const animationFrameRef = useRef<number | undefined>(undefined)
 
   useImperativeHandle(ref, () => ({
+<<<<<<< HEAD
     getImage: () => canvasRef.current?.toDataURL('image/png') ?? undefined,
+=======
+    getImage: () => {
+      const canvas = canvasRef.current
+      if (!canvas) return undefined
+      // Use JPEG instead of PNG for smaller file size
+      return canvas.toDataURL('image/jpeg', 0.85) ?? undefined
+    },
+>>>>>>> 4e2716b47bba5627e9fad37c38b846ac6511e62a
     spark: () => setSparkIndex((prev) => prev + 1),
     toggleAnimation: () => setIsAnimating((prev) => !prev),
   }))
@@ -174,7 +183,11 @@ const NeonPreviewCanvas = forwardRef<NeonPreviewHandle, BuilderConfig>((config, 
           const glowIntensity = 30 + Math.sin(sparkIndex) * 10
           ctx.shadowColor = config.color
           ctx.shadowBlur = glowIntensity
+<<<<<<< HEAD
           ctx.globalAlpha = 0.9 + Math.sin(sparkIndex * 1.5) * 0.1
+=======
+          ctx.globalAlpha = (config.brightness / 100) * (0.9 + Math.sin(sparkIndex * 1.5) * 0.1)
+>>>>>>> 4e2716b47bba5627e9fad37c38b846ac6511e62a
           ctx.drawImage(img, imageX, imageY, imageWidth, imageHeight)
           
           // Draw outline with pulsing

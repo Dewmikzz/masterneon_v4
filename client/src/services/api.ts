@@ -1,11 +1,12 @@
 import axios from 'axios'
 
-// Use environment variable if set, otherwise use relative path for production or localhost for development
+// In production (Vercel), use relative paths. In development, use localhost
 const getBaseURL = () => {
+  // If VITE_API_URL is explicitly set, use it
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL
   }
-  // In production (Vercel), use relative path
+  // In production, use relative path (works with Vercel)
   if (import.meta.env.PROD) {
     return '/api'
   }

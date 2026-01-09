@@ -1,0 +1,14 @@
+{
+  "name": "master-neon",
+  "version": "1.0.0",
+  "description": "Master Neon - Custom Neon Sign Builder",
+  "scripts": {
+    "build": "cd client && npm install && npm run build",
+    "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm run dev\"",
+    "install:all": "cd client && npm install && cd ../server && npm install"
+  },
+  "keywords": ["neon", "sign", "builder", "custom"],
+  "author": "",
+  "license": "ISC"
+}
+

@@ -22,7 +22,11 @@ const benefits = [
   },
   { 
     title: 'Islandwide Shipping', 
+<<<<<<< HEAD
     detail: 'We offer reliable and efficient islandwide shipping for all your orders.',
+=======
+    detail: 'Delivered ready-to-hang with 2-year hardware warranty.',
+>>>>>>> 4e2716b47bba5627e9fad37c38b846ac6511e62a
     icon: Package,
     gradient: 'from-cyan-500 to-blue-500',
     glowColor: 'shadow-cyan-500/50'
@@ -63,7 +67,11 @@ const HomePage = () => (
           </Link>
         </div>
         <div className="mt-10 grid gap-4 sm:grid-cols-3">
+<<<<<<< HEAD
           {['3,400+ installs', '7-day average build', 'Islandwide dilivery'].map((stat) => (
+=======
+          {['3,400+ installs', '7-day average build', '2-year warranty'].map((stat) => (
+>>>>>>> 4e2716b47bba5627e9fad37c38b846ac6511e62a
             <p key={stat} className="rounded-xl border border-white/10 px-4 py-3 text-sm text-white/70">
               {stat}
             </p>
@@ -111,9 +119,13 @@ const HomePage = () => (
                 src={item.imageUrl}
                 alt={item.label}
                 className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+<<<<<<< HEAD
                 loading="eager"
                 fetchPriority="high"
                 decoding="sync"
+=======
+                loading="lazy"
+>>>>>>> 4e2716b47bba5627e9fad37c38b846ac6511e62a
               />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/65 to-transparent" />
               <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between">
