@@ -43,12 +43,13 @@ module.exports = async (req, res) => {
       
       console.log('📄 Design PDF size check:', Math.round(base64Length / 1024) + 'KB')
       
-      // PDF is larger than 1.5MB base64, don't send it (email will still work)
-      if (base64Length > 1.5 * 1024 * 1024) {
+      // PDF is larger than 2MB base64, don't send it (email will still work)
+      // Increased limit to ensure design PDFs are attached
+      if (base64Length > 2 * 1024 * 1024) {
         console.log('⚠️ Design PDF too large (' + Math.round(base64Length / 1024) + 'KB), skipping attachment to reduce payload size')
         optimizedPdfBase64 = null
       } else {
-        console.log('✅ Design PDF size OK, will attach')
+        console.log('✅ Design PDF size OK (' + Math.round(base64Length / 1024) + 'KB), will attach')
       }
     } else {
       console.log('⚠️ No design PDF provided')
@@ -63,12 +64,13 @@ module.exports = async (req, res) => {
       
       console.log('📄 Invoice PDF size check:', Math.round(base64Length / 1024) + 'KB')
       
-      // Invoice PDF is larger than 1MB base64, don't send it
-      if (base64Length > 1 * 1024 * 1024) {
+      // Invoice PDF is larger than 1.5MB base64, don't send it
+      // Increased limit to ensure invoice PDFs are attached
+      if (base64Length > 1.5 * 1024 * 1024) {
         console.log('⚠️ Invoice PDF too large (' + Math.round(base64Length / 1024) + 'KB), skipping attachment to reduce payload size')
         optimizedInvoicePdfBase64 = null
       } else {
-        console.log('✅ Invoice PDF size OK, will attach')
+        console.log('✅ Invoice PDF size OK (' + Math.round(base64Length / 1024) + 'KB), will attach')
       }
     } else {
       console.log('⚠️ No invoice PDF provided')
@@ -106,6 +108,12 @@ module.exports = async (req, res) => {
       pdfBase64: optimizedPdfBase64,
       invoicePdfBase64: optimizedInvoicePdfBase64,
     }
+    
+    // Log what's being sent to email service
+    console.log('📧 Request object for email service:')
+    console.log('- pdfBase64:', request.pdfBase64 ? `Present (${Math.round(request.pdfBase64.length / 1024)}KB)` : 'MISSING')
+    console.log('- invoicePdfBase64:', request.invoicePdfBase64 ? `Present (${Math.round(request.invoicePdfBase64.length / 1024)}KB)` : 'MISSING')
+    console.log('- imagePreview:', request.imagePreview ? `Present (${Math.round(request.imagePreview.length / 1024)}KB)` : 'MISSING')
 
     // Attempt to send notification email
     try {
