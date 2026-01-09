@@ -69,10 +69,6 @@ const drawWavePattern = (doc: jsPDF, pageWidth: number, pageHeight: number) => {
     
     // Draw curved lines
     const startX = i * (pageWidth / waves)
-    const _controlX1 = startX + pageWidth * 0.2
-    const _controlY1 = y + 50
-    const _controlX2 = startX + pageWidth * 0.5
-    const _controlY2 = endY - 30
     
     // Simple curve simulation with lines
     const steps = 20
