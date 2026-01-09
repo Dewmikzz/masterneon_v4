@@ -236,6 +236,20 @@ const sendNeonRequestEmail = async (request) => {
     console.log(`  ${idx + 1}. ${att.filename} (${Math.round(att.content.length / 1024)}KB)`)
   })
 
+  // Verify both PDFs are present
+  const hasDesignPDF = attachment.some(a => a.filename === 'design.pdf')
+  const hasInvoicePDF = attachment.some(a => a.filename === 'invoice.pdf')
+  console.log('📄 PDF Verification:')
+  console.log('  - Design PDF:', hasDesignPDF ? '✅ Present' : '❌ Missing')
+  console.log('  - Invoice PDF:', hasInvoicePDF ? '✅ Present' : '❌ Missing')
+  
+  if (!hasDesignPDF && request.pdfBase64) {
+    console.warn('⚠️ WARNING: Design PDF was in request but not added to attachments!')
+  }
+  if (!hasInvoicePDF && request.invoicePdfBase64) {
+    console.warn('⚠️ WARNING: Invoice PDF was in request but not added to attachments!')
+  }
+
   // Build HTML Content
   let configDetails = ''
   if (request.config?.category === 'name') {
@@ -283,44 +297,55 @@ const sendNeonRequestEmail = async (request) => {
     console.log('To:', process.env.DESIGNER_EMAIL)
     console.log('From:', process.env.SMTP_USER)
     console.log('Attachments:', attachment.length)
+    console.log('Attachment files:', attachment.map(a => a.filename).join(', '))
 
     if (sgMail) {
-      // SendGrid format
+      // SendGrid format - ensure all attachments are included
+      const sendGridAttachments = attachment.map(a => ({
+        content: a.content,
+        filename: a.filename,
+        type: a.filename.endsWith('.pdf') ? 'application/pdf' : 'image/png',
+        disposition: 'attachment',
+      }))
+      
+      console.log('📎 SendGrid attachments being sent:', sendGridAttachments.map(a => a.filename).join(', '))
+      
       const msg = {
         to: process.env.DESIGNER_EMAIL,
         from: process.env.SMTP_USER || process.env.FROM_EMAIL || 'no-reply@masterneon.com',
         subject: `New Request: ${request.customerName}`,
         html,
-        attachments: attachment.length > 0 ? attachment.map(a => ({
-          content: a.content,
-          filename: a.filename,
-          type: a.filename.endsWith('.pdf') ? 'application/pdf' : 'image/png',
-          disposition: 'attachment',
-        })) : [],
+        attachments: sendGridAttachments,
       }
       
       console.log('📤 Sending via SendGrid...')
       const result = await sgMail.send(msg)
       console.log('✅ Neon request email sent via SendGrid')
       console.log('SendGrid response status:', result[0]?.statusCode)
+      console.log('📎 Attachments sent:', sendGridAttachments.length, 'files')
       return
     } else if (transporter) {
-      // SMTP format
+      // SMTP format - ensure all attachments are included
+      const smtpAttachments = attachment.map(a => ({ 
+        filename: a.filename, 
+        content: Buffer.from(a.content, 'base64') 
+      }))
+      
+      console.log('📎 SMTP attachments being sent:', smtpAttachments.map(a => a.filename).join(', '))
+      
       const mailOptions = {
         from: `Master Neon Builder <${process.env.SMTP_USER}>`,
         to: process.env.DESIGNER_EMAIL,
         subject: `New Request: ${request.customerName}`,
         html,
-        attachments: attachment.length > 0 ? attachment.map(a => ({ 
-          filename: a.filename, 
-          content: Buffer.from(a.content, 'base64') 
-        })) : undefined,
+        attachments: smtpAttachments.length > 0 ? smtpAttachments : undefined,
       }
 
       console.log('📤 Sending via SMTP...')
       const info = await transporter.sendMail(mailOptions)
       console.log('✅ Neon request email sent via SMTP')
       console.log('SMTP message ID:', info.messageId)
+      console.log('📎 Attachments sent:', smtpAttachments.length, 'files')
       return
     } else {
       throw new Error('No email transport available (neither SendGrid nor SMTP configured)')
