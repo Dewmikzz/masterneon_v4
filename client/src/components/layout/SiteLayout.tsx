@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { Outlet, useLocation } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -55,21 +54,6 @@ const SiteLayout = () => {
     </div>
   )
 }
-=======
-import { Outlet } from 'react-router-dom'
-import NavBar from '../navigation/NavBar'
-import Footer from './Footer'
-
-const SiteLayout = () => (
-  <div className="min-h-screen bg-[radial-gradient(circle_at_top,#1f2937_0%,#05060a_55%)] text-white">
-    <NavBar />
-    <main className="mx-auto min-h-[70vh] max-w-6xl px-6 py-12">
-      <Outlet />
-    </main>
-    <Footer />
-  </div>
-)
->>>>>>> 4e2716b47bba5627e9fad37c38b846ac6511e62a
 
 export default SiteLayout
 

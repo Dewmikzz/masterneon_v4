@@ -15,11 +15,7 @@ export interface LogoSignConfig {
   imageData?: string // base64 image
   text?: string // name/text to add to logo
   color: string
-<<<<<<< HEAD
   frameShape: 'circle' | 'square' // frame shape for logo
-=======
-  brightness: number // 0-100
->>>>>>> 4e2716b47bba5627e9fad37c38b846ac6511e62a
   size: NeonSize
 }
 

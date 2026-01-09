@@ -69,18 +69,10 @@ const drawWavePattern = (doc: jsPDF, pageWidth: number, pageHeight: number) => {
     
     // Draw curved lines
     const startX = i * (pageWidth / waves)
-<<<<<<< HEAD
     const _controlX1 = startX + pageWidth * 0.2
     const _controlY1 = y + 50
     const _controlX2 = startX + pageWidth * 0.5
     const _controlY2 = endY - 30
-=======
-    // Control points reserved for future curve implementation (bezier curves)
-    // const controlX1 = startX + pageWidth * 0.2
-    // const controlY1 = y + 50
-    // const controlX2 = startX + pageWidth * 0.5
-    // const controlY2 = endY - 30
->>>>>>> 4e2716b47bba5627e9fad37c38b846ac6511e62a
     
     // Simple curve simulation with lines
     const steps = 20
@@ -258,11 +250,7 @@ export async function generatePDF(
     
     designFields.push(
       { label: 'Neon Color  :', value: logoConfig.color },
-<<<<<<< HEAD
       { label: 'Frame Shape  :', value: logoConfig.frameShape.charAt(0).toUpperCase() + logoConfig.frameShape.slice(1) },
-=======
-      { label: 'Brightness  :', value: `${logoConfig.brightness}%` },
->>>>>>> 4e2716b47bba5627e9fad37c38b846ac6511e62a
       { label: 'Size  :', value: logoConfig.size.charAt(0).toUpperCase() + logoConfig.size.slice(1) },
     )
     
