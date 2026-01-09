@@ -18,25 +18,48 @@ const resolvedHost =
   process.env.SMTP_HOST ||
   (process.env.SMTP_USER && process.env.SMTP_USER.includes('@gmail.com') ? 'smtp.gmail.com' : undefined)
 
-const transporter = nodemailer.createTransport({
-  host: resolvedHost,
-  port: Number(process.env.SMTP_PORT) || 587,
-  secure: Number(process.env.SMTP_PORT) === 465,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-})
+// Only create transporter if we have the required config (not using SendGrid exclusively)
+let transporter = null
+if (resolvedHost && process.env.SMTP_USER && process.env.SMTP_PASS) {
+  try {
+    transporter = nodemailer.createTransport({
+      host: resolvedHost,
+      port: Number(process.env.SMTP_PORT) || 587,
+      secure: Number(process.env.SMTP_PORT) === 465,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    })
+    console.log('✅ SMTP transporter configured:', resolvedHost)
+  } catch (e) {
+    console.error('❌ Failed to create SMTP transporter:', e.message)
+    transporter = null
+  }
+} else if (!sgMail) {
+  console.warn('⚠️ No email transport configured (neither SendGrid nor SMTP)')
+}
 
 const isEmailConfigured = () => {
-  return (
+  // Check if SendGrid is configured
+  if (sgMail && process.env.DESIGNER_EMAIL && !process.env.DESIGNER_EMAIL.includes('your_')) {
+    return true
+  }
+  
+  // Check if SMTP is configured
+  if (
+    transporter &&
     process.env.SMTP_USER &&
     process.env.SMTP_PASS &&
     !process.env.SMTP_USER.includes('your_') &&
     !process.env.SMTP_PASS.includes('your_') &&
     process.env.DESIGNER_EMAIL &&
     !process.env.DESIGNER_EMAIL.includes('your_')
-  )
+  ) {
+    return true
+  }
+  
+  return false
 }
 
 const getEmailTemplate = (title, content, footerText = '© 2026 Master Neon. All rights reserved.') => `
@@ -219,7 +242,7 @@ const sendNeonRequestEmail = async (request) => {
       console.log('✅ Neon request email sent via SendGrid')
       console.log('SendGrid response status:', result[0]?.statusCode)
       return
-    } else {
+    } else if (transporter) {
       // SMTP format
       const mailOptions = {
         from: `Master Neon Builder <${process.env.SMTP_USER}>`,
@@ -237,6 +260,8 @@ const sendNeonRequestEmail = async (request) => {
       console.log('✅ Neon request email sent via SMTP')
       console.log('SMTP message ID:', info.messageId)
       return
+    } else {
+      throw new Error('No email transport available (neither SendGrid nor SMTP configured)')
     }
   } catch (err) {
     console.error('❌ Error sending email:', err.message)
@@ -303,9 +328,20 @@ setTimeout(() => void processQueuedEmails(), 5 * 1000)
 setInterval(() => void processQueuedEmails(), 60 * 1000)
 
 const sendContactEmail = async (message) => {
+  console.log('📧 sendContactEmail called')
+  console.log('Email config check:', {
+    hasSMTP_USER: !!process.env.SMTP_USER,
+    hasSMTP_PASS: !!process.env.SMTP_PASS,
+    hasDESIGNER_EMAIL: !!process.env.DESIGNER_EMAIL,
+    hasSENDGRID_API_KEY: !!process.env.SENDGRID_API_KEY,
+    hasTransporter: !!transporter,
+    hasSendGrid: !!sgMail,
+  })
+
   if (!isEmailConfigured()) {
-    console.log('⚠️ Email not configured. Skipping contact email.')
-    return
+    const errorMsg = 'Email not configured. Missing required environment variables: SMTP_USER, SMTP_PASS, DESIGNER_EMAIL, or SENDGRID_API_KEY'
+    console.error('❌', errorMsg)
+    throw new Error(errorMsg)
   }
 
   const content = `
@@ -325,17 +361,52 @@ const sendContactEmail = async (message) => {
   `
 
   const html = getEmailTemplate('New Contact Message', content)
+  const recipientEmail = process.env.DESIGNER_EMAIL || process.env.ADMIN_EMAIL
 
   try {
-    await transporter.sendMail({
-      from: `Master Neon Website <${process.env.SMTP_USER}>`,
-      to: process.env.DESIGNER_EMAIL || process.env.ADMIN_EMAIL,
-      subject: `Contact: ${message.name}`,
-      html,
-    })
-    console.log('✅ Contact email sent successfully')
+    console.log('📤 Preparing to send contact email...')
+    console.log('To:', recipientEmail)
+    console.log('From:', process.env.SMTP_USER || 'SendGrid')
+
+    if (sgMail) {
+      // SendGrid format
+      const msg = {
+        to: recipientEmail,
+        from: process.env.SMTP_USER || process.env.FROM_EMAIL || 'no-reply@masterneon.com',
+        subject: `Contact: ${message.name}`,
+        html,
+      }
+      
+      console.log('📤 Sending via SendGrid...')
+      const result = await sgMail.send(msg)
+      console.log('✅ Contact email sent via SendGrid')
+      console.log('SendGrid response status:', result[0]?.statusCode)
+      return
+    } else if (transporter) {
+      // SMTP format
+      const mailOptions = {
+        from: `Master Neon Website <${process.env.SMTP_USER}>`,
+        to: recipientEmail,
+        subject: `Contact: ${message.name}`,
+        html,
+      }
+
+      console.log('📤 Sending via SMTP...')
+      const info = await transporter.sendMail(mailOptions)
+      console.log('✅ Contact email sent via SMTP')
+      console.log('SMTP message ID:', info.messageId)
+      return
+    } else {
+      throw new Error('No email transport available (neither SendGrid nor SMTP configured)')
+    }
   } catch (err) {
-    console.error('Error sending contact email:', err.message)
+    console.error('❌ Error sending contact email:', err.message)
+    console.error('Error details:', {
+      name: err.name,
+      code: err.code,
+      response: err.response ? JSON.stringify(err.response) : undefined,
+      stack: err.stack,
+    })
     throw err
   }
 }

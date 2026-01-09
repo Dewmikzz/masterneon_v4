@@ -63,6 +63,12 @@ module.exports = async (req, res) => {
 
     try {
       console.log('📧 Sending contact email...')
+      console.log('Environment check:', {
+        DESIGNER_EMAIL: process.env.DESIGNER_EMAIL ? 'SET' : 'MISSING',
+        SMTP_USER: process.env.SMTP_USER ? 'SET' : 'MISSING',
+        SMTP_PASS: process.env.SMTP_PASS ? 'SET' : 'MISSING',
+        SENDGRID_API_KEY: process.env.SENDGRID_API_KEY ? 'SET' : 'MISSING',
+      })
       console.log('Contact details:', { name: name.trim(), email: email.trim().toLowerCase(), phone: phone?.trim() || '' })
       
       await sendContactEmail({ 
@@ -79,14 +85,20 @@ module.exports = async (req, res) => {
       })
     } catch (emailError) {
       const errorMessage = emailError && emailError.message ? emailError.message : 'Unknown error'
+      const errorCode = emailError && emailError.code ? emailError.code : 'UNKNOWN'
       console.error('❌ Failed to send contact email:', errorMessage)
+      console.error('Error code:', errorCode)
       console.error('Full error:', emailError)
       
-      // Still return success since the message was received
+      // Return success to user but log the error
       return res.status(200).json({
         success: true,
         message: 'Message received. We will respond within 1 business day.',
-        warning: 'Email notification may have failed, but your message was logged.',
+        warning: errorMessage.includes('not configured') 
+          ? 'Email notification is not configured. Please check your SMTP/SendGrid settings in Vercel environment variables.'
+          : `Email notification failed (${errorCode}). Please check Vercel logs for details.`,
+        emailSent: false,
+        error: process.env.NODE_ENV === 'development' ? errorMessage : undefined,
       })
     }
   } catch (err) {
